@@ -22,6 +22,10 @@
     "no-invalid-regexp": "error",
     "prefer-const": "error",
     "no-unreachable": "error",
-    "no-var": "error"
+    "no-var": "error",
+    "@typescript-eslint/no-explicit-any": "warn"
+  },
+  "globals": {
+    "process": "readonly"
   }
 }
