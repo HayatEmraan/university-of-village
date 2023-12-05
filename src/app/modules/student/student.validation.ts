@@ -99,7 +99,6 @@ export const studentSchemaValidation = z.object({
   permanentAddress: z.string(),
   guardian: Guardian,
   localGuardian: LocalGuardian,
-  academicDepartment: z.string(),
+  academicSemester: z.string(),
   profileImage: z.string().optional(),
-  isDeleted: z.boolean().default(false),
 })
