@@ -52,7 +52,7 @@ export const studentSchema = new Schema<TStudent>(
     permanentAddress: String,
     guardian: GuardianSchema,
     localGuardian: LocalGuardianSchema,
-    academicSemester: String,
+    academicSemester: Types.ObjectId,
     profileImage: String,
     isDeleted: String,
   },
