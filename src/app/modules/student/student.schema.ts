@@ -54,7 +54,10 @@ export const studentSchema = new Schema<TStudent>(
     localGuardian: LocalGuardianSchema,
     academicSemester: Types.ObjectId,
     profileImage: String,
-    isDeleted: String,
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     versionKey: false,
