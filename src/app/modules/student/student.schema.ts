@@ -1,5 +1,9 @@
-import { Schema, Types, model } from 'mongoose'
+import { Schema, model } from 'mongoose'
 import { TStudent } from './student.type'
+import { AcademicSemesterModel } from '../academicSemester/academic.schema'
+import { departmentModel } from '../academicDepartment/department.schema'
+import { userModel } from '../user/user.schema'
+import AppError from '../../errors/appError'
 
 const NameSchema = new Schema(
   {
@@ -38,7 +42,11 @@ const LocalGuardianSchema = new Schema(
 export const studentSchema = new Schema<TStudent>(
   {
     id: String,
-    user: Types.ObjectId,
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: userModel,
+      required: true,
+    },
     name: NameSchema,
     gender: {
       type: String,
@@ -52,7 +60,14 @@ export const studentSchema = new Schema<TStudent>(
     permanentAddress: String,
     guardian: GuardianSchema,
     localGuardian: LocalGuardianSchema,
-    academicSemester: Types.ObjectId,
+    academicSemester: {
+      type: Schema.Types.ObjectId,
+      ref: AcademicSemesterModel,
+    },
+    academicDepartment: {
+      type: Schema.Types.ObjectId,
+      ref: departmentModel,
+    },
     profileImage: String,
     isDeleted: {
       type: Boolean,
@@ -64,5 +79,13 @@ export const studentSchema = new Schema<TStudent>(
     timestamps: true,
   },
 )
+
+studentSchema.pre('findOneAndUpdate', async function (next) {
+  const isExist = await this.model.findOne(this.getQuery())
+  if (!isExist) {
+    return next(new AppError(404, 'Student not found'))
+  }
+  next()
+})
 
 export const studentModel = model<TStudent>('student', studentSchema)

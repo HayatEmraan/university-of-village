@@ -1,10 +1,12 @@
+
+import AppError from '../../errors/appError'
 import { TAcademicSemester } from './academic.interface'
 import { AcademicSemesterModel } from './academic.schema'
 import { SemesterValidate } from './academic.validate'
 
 export const createAcademicSemester = (payload: TAcademicSemester) => {
   if (SemesterValidate[payload.name] !== payload.code) {
-    throw new Error('Invalid Semester code')
+    throw new AppError(422, 'Invalid Semester code')
   }
   return AcademicSemesterModel.create(payload)
 }
