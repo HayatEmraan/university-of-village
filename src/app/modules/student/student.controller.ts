@@ -7,6 +7,7 @@ import {
   getStudentsFromDb,
   updateSingleStudentFromDb,
 } from './student.service'
+import { NonPrimitive } from './student.utils'
 
 const getStudents: RequestHandler = async (req, res) => {
   return globalResponseHandler(res, {
@@ -27,11 +28,18 @@ const getSingleStudent: RequestHandler = async (req, res) => {
 }
 
 const updateStudent: RequestHandler = async (req, res) => {
+  const { name, localGuardian, guardian, ...restInfo } = req.body.student
+
+  const updatedInfo = new NonPrimitive({ ...restInfo })
+    .Parent('name', name)
+    .Parent('localGuardian', localGuardian)
+    .Child('guardian', guardian).modifiedDocument
+
   return globalResponseHandler(res, {
     status: 200,
     success: true,
     message: 'Student updated successfully',
-    data: await updateSingleStudentFromDb(req.params.id, req.body.student),
+    data: await updateSingleStudentFromDb(req.params.id, updatedInfo),
   })
 }
 

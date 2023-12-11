@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose'
+import mongoose, { Schema, model } from 'mongoose'
 import { TStudent } from './student.type'
 import { AcademicSemesterModel } from '../academicSemester/academic.schema'
 import { departmentModel } from '../academicDepartment/department.schema'
@@ -63,10 +63,12 @@ export const studentSchema = new Schema<TStudent>(
     academicSemester: {
       type: Schema.Types.ObjectId,
       ref: AcademicSemesterModel,
+      required: true,
     },
     academicDepartment: {
       type: Schema.Types.ObjectId,
       ref: departmentModel,
+      required: true,
     },
     profileImage: String,
     isDeleted: {
@@ -83,7 +85,29 @@ export const studentSchema = new Schema<TStudent>(
 studentSchema.pre('findOneAndUpdate', async function (next) {
   const isExist = await this.model.findOne(this.getQuery())
   if (!isExist) {
-    return next(new AppError(404, 'Student not found'))
+    throw new AppError(404, 'Student not found')
+  }
+  next()
+})
+
+studentSchema.pre('find', async function (next) {
+  this.find({ isDeleted: { $ne: true } })
+  next()
+})
+
+studentSchema.pre('findOne', async function (next) {
+  const value = await this.model.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(this.getQuery()._id),
+        isDeleted: {
+          $ne: true,
+        },
+      },
+    },
+  ])
+  if (value.length === 0) {
+    throw new AppError(404, 'Student not found')
   }
   next()
 })

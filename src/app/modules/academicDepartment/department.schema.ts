@@ -13,6 +13,7 @@ const departmentSchema = new Schema<TDepartmentInterface>(
     academicFaculty: {
       type: Schema.Types.ObjectId,
       ref: facultyModel,
+      unique: true,
       required: true,
     },
   },
