@@ -18,3 +18,10 @@ export class NonPrimitive {
     return this
   }
 }
+
+export const searchFields = [
+  'name.firstName',
+  'name.lastName',
+  'name.middleName',
+]
+export const excludeFields = ['select', 'sort', 'page', 'limit', 'search']

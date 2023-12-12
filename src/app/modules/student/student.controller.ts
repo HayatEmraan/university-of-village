@@ -10,7 +10,6 @@ import {
 import { NonPrimitive } from './student.utils'
 
 const getStudents: RequestHandler = async (req, res) => {
-  console.log(req.query);
   return globalResponseHandler(res, {
     status: 200,
     success: true,
