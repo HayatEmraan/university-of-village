@@ -37,3 +37,19 @@ export const randomPass = () => {
   }
   return password
 }
+
+const lastFacultyId = async () => {
+  const findLast = await userModel
+    .findOne({
+      role: 'faculty',
+    })
+    .sort({ _id: -1 })
+    .lean()
+  return findLast?.id.substring(6)
+}
+
+export const generateFacultyId = async () => {
+  const currentId = (await lastFacultyId()) || (0).toString()
+  const id = (Number(currentId) + 1).toString().padStart(5, '0')
+  return `UOV-F-${id}`
+}

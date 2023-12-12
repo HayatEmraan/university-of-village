@@ -4,9 +4,10 @@ import { AcademicSemesterModel } from '../academicSemester/academic.schema'
 import { studentModel } from '../student/student.schema'
 import { TStudent } from '../student/student.type'
 import { userModel } from './user.schema'
-import { generateId, randomPass } from './user.utils'
+import { generateFacultyId, generateId, randomPass } from './user.utils'
 import AppError from '../../errors/appError'
-
+import { TUFaculty } from '../faculty/uFaculty.type'
+import { UFacultyModel } from '../faculty/uFaculty.schema'
 
 export const CreateStudentUR = async (password: string, student: TStudent) => {
   const session = await mongoose.startSession()
@@ -37,5 +38,45 @@ export const CreateStudentUR = async (password: string, student: TStudent) => {
     await session.abortTransaction()
     await session.endSession()
     throw new AppError(501, 'User not created')
+  }
+}
+
+export const CreateFacultyUR = async (password: string, faculty: TUFaculty) => {
+  const session = await mongoose.startSession()
+  try {
+    await session.startTransaction()
+    const createUserFaculty = await userModel.create(
+      [
+        {
+          id: await generateFacultyId(),
+          password: password || randomPass(),
+          role: 'faculty',
+        },
+      ],
+      { session },
+    )
+    console.log('createUserFaculty', {
+      ...faculty,
+      user: createUserFaculty[0]._id,
+      id: createUserFaculty[0].id,
+    })
+    const createFaculty = await UFacultyModel.create(
+      [
+        {
+          ...faculty,
+          user: createUserFaculty[0]._id,
+          id: createUserFaculty[0].id,
+        },
+      ],
+      { session },
+    )
+
+    await session.commitTransaction()
+    await session.endSession()
+    return createFaculty
+  } catch (error) {
+    await session.abortTransaction()
+    await session.endSession()
+    throw new AppError(501, 'Faculty not created')
   }
 }
