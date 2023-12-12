@@ -17,16 +17,18 @@ export const AcademicSemesterValidation = z.object({
 
 export const UpdateAcademicSemesterValidation = z
   .object({
-    body: z.object({
-      name: z.enum(TAcademicName as [string, ...string[]]),
-      year: z.string({
-        required_error: 'year is required',
-        invalid_type_error: 'year must be a string',
-      }),
-      code: z.enum(AcademicCode as [string, ...string[]]),
-      startMonth: z.enum(Months as [string, ...string[]]),
-      endMonth: z.enum(Months as [string, ...string[]]),
-    }).partial(),
+    body: z
+      .object({
+        name: z.enum(TAcademicName as [string, ...string[]]),
+        year: z.string({
+          required_error: 'year is required',
+          invalid_type_error: 'year must be a string',
+        }),
+        code: z.enum(AcademicCode as [string, ...string[]]),
+        startMonth: z.enum(Months as [string, ...string[]]),
+        endMonth: z.enum(Months as [string, ...string[]]),
+      })
+      .partial(),
   })
   .partial()
 

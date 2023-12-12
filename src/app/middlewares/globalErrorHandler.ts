@@ -17,7 +17,7 @@ export const globalErrorHandler: ErrorRequestHandler = async (
 ) => {
   let message = 'Something went wrong'
   let errStack = error
-  console.log(error);
+  console.log(error)
   if (error instanceof ZodError) {
     const err = handleZodError(error)
     message = err.message

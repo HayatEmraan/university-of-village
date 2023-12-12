@@ -1,7 +1,7 @@
-import { Types } from 'mongoose'
+import { Types } from "mongoose"
 
-export interface TUFaculty {
-  id: Types.ObjectId
+export type TAdmin = {
+  id: string
   user: Types.ObjectId
   name: {
     firstName: string
@@ -15,9 +15,8 @@ export interface TUFaculty {
   emergencyNo: string
   presentAddress: string
   permanentAddress: string
-  academicDepartment: Types.ObjectId
-  academicFaculty: Types.ObjectId
   designation: string
+  managementDepartment: string
   profileImage?: string
   isDeleted: boolean
 }

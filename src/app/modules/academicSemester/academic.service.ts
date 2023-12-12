@@ -1,4 +1,3 @@
-
 import AppError from '../../errors/appError'
 import { TAcademicSemester } from './academic.interface'
 import { AcademicSemesterModel } from './academic.schema'

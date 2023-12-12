@@ -1,7 +1,12 @@
 import { Router } from 'express'
 import { requestValidate } from '../utils/requestValidate'
 import { updateStudentSchemaValidation } from './student.validation'
-import { studentDelete, studentGet, studentUpdate, studentsGet } from './student.controller'
+import {
+  studentDelete,
+  studentGet,
+  studentUpdate,
+  studentsGet,
+} from './student.controller'
 
 export const StudentRoutes = Router()
 

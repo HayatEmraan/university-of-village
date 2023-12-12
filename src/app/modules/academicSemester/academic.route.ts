@@ -1,7 +1,15 @@
 import { Router } from 'express'
-import { createSemester, getSemesters, getSingleSemester, updateSemester } from './academic.controller'
+import {
+  createSemester,
+  getSemesters,
+  getSingleSemester,
+  updateSemester,
+} from './academic.controller'
 import { requestValidate } from '../utils/requestValidate'
-import { AcademicSemesterValidation, UpdateAcademicSemesterValidation } from './academic.validate'
+import {
+  AcademicSemesterValidation,
+  UpdateAcademicSemesterValidation,
+} from './academic.validate'
 
 export const AcademicRoutes = Router()
 

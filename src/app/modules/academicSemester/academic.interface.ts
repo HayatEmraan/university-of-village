@@ -23,7 +23,6 @@ export interface TAcademicSemester {
   endMonth: TMonths
 }
 
-
 export interface TSemesterNameAndCode {
   [key: string]: string
 }

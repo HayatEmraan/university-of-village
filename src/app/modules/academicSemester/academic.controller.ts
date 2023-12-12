@@ -35,7 +35,7 @@ const getAcademic: RequestHandler = async (req, res) => {
   })
 }
 
-const updateAcademic: RequestHandler = async(req, res) => {
+const updateAcademic: RequestHandler = async (req, res) => {
   return globalResponseHandler(res, {
     status: 200,
     success: true,
