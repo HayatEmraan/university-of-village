@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import QueryBuilder from '../../builder/QueryBuilder'
-import { TCourse } from './course.interface'
-import { CourseModel } from './course.schema'
+import { TCourse, TCourseFaculties } from './course.interface'
+import { CourseFacultiesModel, CourseModel } from './course.schema'
 import AppError from '../../errors/appError'
 
 export const GetCourses = async function (query: Record<string, unknown>) {
@@ -79,4 +79,45 @@ export const GetCourse = async (id: string) => {
 
 export const DeleteCourse = async (id: string) => {
   return CourseModel.findByIdAndUpdate(id, { isDeleted: true }, { new: true })
+}
+
+export const AssignCourseToFaculties = async (
+  id: string,
+  payload: Partial<TCourseFaculties>,
+) => {
+  return await CourseFacultiesModel.findByIdAndUpdate(
+    id,
+    {
+      course: id,
+      $addToSet: {
+        faculties: {
+          $each: payload.faculties,
+        },
+      },
+    },
+    {
+      new: true,
+      upsert: true,
+    },
+  )
+}
+
+export const RemoveCourseToFaculties = async (
+  id: string,
+  payload: Partial<TCourseFaculties>,
+) => {
+  return await CourseFacultiesModel.findByIdAndUpdate(
+    id,
+    {
+      $pull: {
+        faculties: {
+          $in: payload.faculties,
+        },
+      },
+    },
+    {
+      new: true,
+      runValidators: true,
+    },
+  )
 }

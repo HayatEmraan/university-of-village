@@ -1,13 +1,19 @@
 import { Router } from 'express'
 import {
+  AssignCourseToFacultiesIntoDb,
   CreateCourseIntoDb,
   DeleteCourseFromDb,
   GetCourseFromDb,
   GetCoursesFromDb,
+  RemoveCourseToFacultiesIntoDb,
   UpdateCourseIntoDb,
 } from './course.controller'
 import { requestValidate } from '../utils/requestValidate'
-import { CourseUpdateValidation, CourseValidation } from './course.validation'
+import {
+  CourseFacultiesValidation,
+  CourseUpdateValidation,
+  CourseValidation,
+} from './course.validation'
 
 export const CourseRoutes = Router()
 
@@ -23,4 +29,16 @@ CourseRoutes.patch(
   requestValidate(CourseUpdateValidation),
   UpdateCourseIntoDb,
 )
+CourseRoutes.put(
+  '/:id/assign-faculties',
+  requestValidate(CourseFacultiesValidation),
+  AssignCourseToFacultiesIntoDb,
+)
+
+CourseRoutes.delete(
+  '/:id/remove-faculties',
+  requestValidate(CourseFacultiesValidation),
+  RemoveCourseToFacultiesIntoDb,
+)
+
 CourseRoutes.delete('/:id', DeleteCourseFromDb)

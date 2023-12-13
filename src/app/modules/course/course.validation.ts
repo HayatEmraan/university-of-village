@@ -31,7 +31,12 @@ export const CourseValidation = z.object({
       .optional(),
     isDeleted: z.boolean().default(false).optional(),
   }),
-
 })
 
 export const CourseUpdateValidation = CourseValidation.deepPartial()
+
+export const CourseFacultiesValidation = z.object({
+  body: z.object({
+    faculties: z.array(z.string()),
+  }),
+})
