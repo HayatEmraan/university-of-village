@@ -8,6 +8,7 @@ import { NODE_ENV } from '../config'
 import { handleValidationError } from '../errors/handleValidationError'
 import { handleCastError } from '../errors/handleCastError'
 import { handleDuplicateError } from '../errors/handleDuplicateError'
+import AppError from '../errors/appError'
 
 export const globalErrorHandler: ErrorRequestHandler = async (
   error,
@@ -17,7 +18,7 @@ export const globalErrorHandler: ErrorRequestHandler = async (
 ) => {
   let message = 'Something went wrong'
   let errStack = error
-  console.log(error)
+  
   if (error instanceof ZodError) {
     const err = handleZodError(error)
     message = err.message
@@ -31,6 +32,9 @@ export const globalErrorHandler: ErrorRequestHandler = async (
   } else if (error.code === 11000) {
     message = 'Duplicate value entered'
     errStack = handleDuplicateError(error)
+  } else if (error instanceof AppError) {
+    message = error.message
+    errStack = error
   }
 
   return res.status(error.statusCode || 500).json({
