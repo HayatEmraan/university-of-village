@@ -1,6 +1,7 @@
 import QueryBuilder from '../../builder/QueryBuilder'
 import AppError from '../../errors/appError'
 import { AcademicSemesterModel } from '../academicSemester/academic.schema'
+import { SemesterStatus } from './semester.constant'
 import { SemesterRegistrationModel } from './semester.schema'
 import { TSemesterRegistration } from './semester.type'
 
@@ -26,6 +27,31 @@ const updateSemesterRegistration = async (
   id: string,
   payload: Partial<TSemesterRegistration>,
 ) => {
+  const reqUpdateDocument = await SemesterRegistrationModel.findById(id)
+  if (!reqUpdateDocument) {
+    throw new AppError(404, 'Semester registration not found')
+  }
+  if (reqUpdateDocument?.status === SemesterStatus.COMPLETED) {
+    throw new AppError(400, 'Semester registration is already ended')
+  }
+  if (
+    reqUpdateDocument?.status === SemesterStatus.UPCOMING &&
+    payload?.status === SemesterStatus.COMPLETED
+  ) {
+    throw new AppError(
+      400,
+      'Semester registration is already upcoming, can not update to completed',
+    )
+  }
+  if (
+    reqUpdateDocument?.status === SemesterStatus.ONGOING &&
+    payload?.status === SemesterStatus.UPCOMING
+  ) {
+    throw new AppError(
+      400,
+      'Semester registration is already ongoing, can not update to upcoming',
+    )
+  }
   return SemesterRegistrationModel.findByIdAndUpdate(id, payload, {
     new: true,
     runValidators: true,
