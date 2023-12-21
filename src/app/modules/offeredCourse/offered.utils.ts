@@ -13,7 +13,7 @@ export const hasTimeConflict = (assign: TSchedule[], schedule: TSchedule) => {
     const upcomingStartTime = new Date(`1970-01-01T${schedule.startTime}`)
     const upcomingEndTime = new Date(`1970-01-01T${schedule.endTime}`)
 
-    if (upcomingStartTime < exitEndTime && upcomingEndTime > exitStartTime) {
+    if (upcomingStartTime <= exitEndTime && upcomingEndTime >= exitStartTime) {
       return true
     }
   }

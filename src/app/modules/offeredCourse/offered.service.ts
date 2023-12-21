@@ -1,3 +1,4 @@
+import { SemesterStatus } from './../semesterRegistration/semester.constant'
 import QueryBuilder from '../../builder/QueryBuilder'
 import AppError from '../../errors/appError'
 import { departmentModel } from '../academicDepartment/department.schema'
@@ -112,9 +113,66 @@ const getOfferedCourse = async (id: string) => {
 
 const updateOfferedCourse = async (
   id: string,
-  payload: Partial<TOfferedCourse>,
+  payload: Pick<TOfferedCourse, 'days' | 'startTime' | 'endTime' | 'faculty'>,
 ) => {
+  const { faculty, days } = payload
+
+  const isOfferedCourseExit = await OfferedCourseModel.findById(id)
+  if (!isOfferedCourseExit) {
+    throw new AppError(404, 'Offered course not found')
+  }
+  const hasFaculty = await UFacultyModel.findById(payload.faculty)
+  if (!hasFaculty) {
+    throw new AppError(404, 'Faculty not found')
+  }
+
+  const semesterRegistration = isOfferedCourseExit.semesterRegistration
+  const assignedFacultyTiming = await OfferedCourseModel.aggregate([
+    {
+      $match: {
+        semesterRegistration,
+        faculty,
+        days: {
+          $in: days,
+        },
+      },
+    },
+  ])
+
+  const upcomingAssignFacultyTiming = {
+    startTime: payload?.startTime,
+    endTime: payload?.endTime,
+    days: payload?.days,
+  }
+
+  if (hasTimeConflict(assignedFacultyTiming, upcomingAssignFacultyTiming)) {
+    throw new AppError(409, 'Time Conflict found')
+  }
+
+  const semesterRegistrationStatus = await SemesterRegistrationModel.findById(
+    isOfferedCourseExit.semesterRegistration,
+  )
+
+  if (semesterRegistrationStatus?.status !== SemesterStatus.UPCOMING) {
+    throw new AppError(409, 'Semester registration is not upcoming')
+  }
+
   return await OfferedCourseModel.findByIdAndUpdate(id, payload, { new: true })
+}
+
+const deleteOfferedCourse = async (id: string) => {
+  const isOfferedCourseExit = await OfferedCourseModel.findById(id)
+  if (!isOfferedCourseExit) {
+    throw new AppError(404, 'Offered course not found')
+  }
+  const isSemesterRegistrationUpcoming = await SemesterRegistrationModel.findById(
+    isOfferedCourseExit.semesterRegistration,
+  ).select('status')
+
+  if (isSemesterRegistrationUpcoming?.status !== SemesterStatus.UPCOMING) {
+    throw new AppError(409, 'Semester registration is not upcoming')
+  }
+  return await OfferedCourseModel.findByIdAndDelete(id)
 }
 
 export const OfferedCourseService = {
@@ -122,4 +180,5 @@ export const OfferedCourseService = {
   getAllOfferedCourse,
   getOfferedCourse,
   updateOfferedCourse,
+  deleteOfferedCourse,
 }

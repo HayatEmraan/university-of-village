@@ -26,3 +26,8 @@ OfferedRoutes.patch(
   requestValidate(UpdateOfferedValidation),
   OfferedController.updateOfferedCourse,
 )
+
+OfferedRoutes.delete(
+  '/delete-offered-course/:id',
+  OfferedController.deleteOfferedCourse,
+)
