@@ -1,9 +1,11 @@
+import mongoose from 'mongoose'
 import QueryBuilder from '../../builder/QueryBuilder'
 import AppError from '../../errors/appError'
 import { AcademicSemesterModel } from '../academicSemester/academic.schema'
 import { SemesterStatus } from './semester.constant'
 import { SemesterRegistrationModel } from './semester.schema'
 import { TSemesterRegistration } from './semester.type'
+import { OfferedCourseModel } from '../offeredCourse/offered.schema'
 
 const createSemesterRegistration = async (payload: TSemesterRegistration) => {
   const { academicSemester } = payload
@@ -74,9 +76,43 @@ const getSemesterRegistration = async (id: string) => {
   return SemesterRegistrationModel.findById(id)
 }
 
+const deleteSemesterRegistration = async (id: string) => {
+  const session = await mongoose.startSession()
+  try {
+    await session.startTransaction()
+    const reqDeleteDocument = await SemesterRegistrationModel.findById(id)
+    if (reqDeleteDocument?.status !== SemesterStatus.UPCOMING) {
+      throw new AppError(
+        400,
+        `Semester registration is already ${reqDeleteDocument?.status}, can not delete`,
+      )
+    }
+
+    await OfferedCourseModel.deleteMany(
+      {
+        semesterRegistration: reqDeleteDocument?._id,
+      },
+      { session },
+    )
+
+    const result = await SemesterRegistrationModel.findByIdAndDelete(id, {
+      session,
+    })
+    await session.commitTransaction()
+    await session.endSession()
+    return result
+  } catch (error) {
+    console.log(error)
+    await session.abortTransaction()
+    await session.endSession()
+    throw new AppError(404, 'Semester registration not deleted')
+  }
+}
+
 export const SemesterRegistrationService = {
   createSemesterRegistration,
   updateSemesterRegistration,
   getAllSemesterRegistration,
   getSemesterRegistration,
+  deleteSemesterRegistration,
 }

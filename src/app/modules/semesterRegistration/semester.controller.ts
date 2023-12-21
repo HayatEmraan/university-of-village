@@ -22,7 +22,9 @@ const getAllSemesterRegistration: RequestHandler = catchAsync(
       status: 200,
       success: true,
       message: 'Semester registration retrieved successfully',
-      data: await SemesterRegistrationService.getAllSemesterRegistration(req.query),
+      data: await SemesterRegistrationService.getAllSemesterRegistration(
+        req.query,
+      ),
     })
   },
 )
@@ -52,9 +54,23 @@ const updateSemesterRegistration: RequestHandler = catchAsync(
   },
 )
 
+const deleteSemesterRegistration: RequestHandler = catchAsync(
+  async (req, res) => {
+    return globalResponseHandler(res, {
+      status: 200,
+      success: true,
+      message: 'Semester registration deleted successfully',
+      data: await SemesterRegistrationService.deleteSemesterRegistration(
+        req.params.id,
+      ),
+    })
+  },
+)
+
 export const SemesterRegistrationController = {
   semesterRegistrationCreate,
   getAllSemesterRegistration,
   getSemesterRegistration,
   updateSemesterRegistration,
+  deleteSemesterRegistration,
 }

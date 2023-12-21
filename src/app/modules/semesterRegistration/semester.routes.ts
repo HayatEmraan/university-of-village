@@ -29,3 +29,8 @@ SemesterRegistrationRoutes.patch(
   requestValidate(UpdateSemesterRegistrationValidation),
   SemesterRegistrationController.updateSemesterRegistration,
 )
+
+SemesterRegistrationRoutes.delete(
+  '/delete-semester-registration/:id',
+  SemesterRegistrationController.deleteSemesterRegistration,
+)
