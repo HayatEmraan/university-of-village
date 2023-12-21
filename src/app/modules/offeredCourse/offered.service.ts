@@ -7,6 +7,7 @@ import { UFacultyModel } from '../faculty/uFaculty.schema'
 import { SemesterRegistrationModel } from '../semesterRegistration/semester.schema'
 import { OfferedCourseModel } from './offered.schema'
 import { TOfferedCourse } from './offered.type'
+import { hasTimeConflict } from './offered.utils'
 
 const createOfferedCourse = async (payload: TOfferedCourse) => {
   const {
@@ -39,10 +40,51 @@ const createOfferedCourse = async (payload: TOfferedCourse) => {
   if (!isCourseExit) {
     throw new AppError(404, 'Course not found')
   }
-  
+
   const isFacultyExit = await UFacultyModel.findById(faculty)
   if (!isFacultyExit) {
     throw new AppError(404, 'Faculty not found')
+  }
+
+  const isAcademicDepartmentBelongToAcademicFaculty =
+    await departmentModel.findOne({
+      _id: academicDepartment,
+      academicFaculty: academicFaculty,
+    })
+
+  if (!isAcademicDepartmentBelongToAcademicFaculty) {
+    throw new AppError(
+      404,
+      'Academic department is not belong to academic faculty',
+    )
+  }
+
+  const isOfferedSectionExit = await OfferedCourseModel.findOne({
+    academicFaculty,
+    academicDepartment,
+    section: payload.section,
+  })
+
+  if (isOfferedSectionExit) {
+    throw new AppError(409, 'Section is already offered')
+  }
+
+  const assignedFacultyTiming = await OfferedCourseModel.find({
+    semesterRegistration,
+    faculty,
+    days: {
+      $in: payload.days,
+    },
+  }).select('startTime endTime days')
+
+  const upcomingAssignFacultyTiming = {
+    startTime: payload?.startTime,
+    endTime: payload?.endTime,
+    days: payload?.days,
+  }
+
+  if (hasTimeConflict(assignedFacultyTiming, upcomingAssignFacultyTiming)) {
+    throw new AppError(409, 'Time Conflict found')
   }
 
   return await OfferedCourseModel.create({
