@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 export const UFacultyValidation = z.object({
   body: z.object({
+    password: z.string().optional(),
     faculty: z.object({
       name: z.object({
         firstName: z

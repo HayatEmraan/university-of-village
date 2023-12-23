@@ -87,20 +87,23 @@ const LocalGuardian = z.object({
 })
 
 export const studentSchemaValidation = z.object({
-  id: z.string(),
-  user: z.string(),
-  name: StudentName,
-  gender: z.enum(['female', 'male', 'other']),
-  dateOfBirth: z.string().optional(),
-  email: z.string().email(),
-  contactNo: z.string().max(15),
-  emergencyNo: z.string().max(15),
-  presentAddress: z.string(),
-  permanentAddress: z.string(),
-  guardian: Guardian,
-  localGuardian: LocalGuardian,
-  academicSemester: z.string(),
-  profileImage: z.string().optional(),
+  body: z.object({
+    password: z.string().optional(),
+    student: z.object({
+      name: StudentName,
+      gender: z.enum(['female', 'male', 'other']),
+      dateOfBirth: z.string().optional(),
+      email: z.string().email(),
+      contactNo: z.string().max(15),
+      emergencyNo: z.string().max(15),
+      presentAddress: z.string(),
+      permanentAddress: z.string(),
+      guardian: Guardian,
+      localGuardian: LocalGuardian,
+      academicSemester: z.string(),
+      profileImage: z.string().optional(),
+    }),
+  }),
 })
 
 export const updateStudentSchemaValidation =

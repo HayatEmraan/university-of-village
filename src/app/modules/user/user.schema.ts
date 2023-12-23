@@ -7,7 +7,7 @@ import AppError from '../../errors/appError'
 export const userSchema = new Schema<TUser, IUserIn>(
   {
     id: { type: String, required: true },
-    password: { type: String, required: true },
+    password: { type: String, required: true, select: false },
     needsPasswordChange: { type: Boolean, required: true, default: true },
     role: {
       type: String,
@@ -22,6 +22,9 @@ export const userSchema = new Schema<TUser, IUserIn>(
       default: 'active',
     },
     isDeleted: { type: Boolean, required: true, default: false },
+    lastPasswordChangedAt: {
+      type: Date
+    },
   },
   {
     versionKey: false,
@@ -35,16 +38,18 @@ userSchema.pre('save', async function (next) {
 })
 
 userSchema.statics.isUserExit = async function (id: string) {
-  const user = await userModel.findOne({
-    $and: [
-      {
-        id: id,
-      },
-      {
-        isDeleted: false,
-      },
-    ],
-  })
+  const user = await userModel
+    .findOne({
+      $and: [
+        {
+          id: id,
+        },
+        {
+          isDeleted: false,
+        },
+      ],
+    })
+    .select('+password')
   if (!user) {
     throw new AppError(404, 'User not found')
   }
@@ -56,8 +61,10 @@ userSchema.statics.isUserExit = async function (id: string) {
   return user
 }
 
-
-userSchema.statics.isPasswordMatch = async function (plainText: string, hashPassword: string) {
+userSchema.statics.isPasswordMatch = async function (
+  plainText: string,
+  hashPassword: string,
+) {
   return await bcrypt.compare(plainText, hashPassword)
 }
 

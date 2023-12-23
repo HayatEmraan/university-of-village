@@ -8,10 +8,11 @@ import {
 import { requestValidate } from '../utils/requestValidate'
 import { updateUFacultyValidation } from './uFaculty.validation'
 import { auth } from '../utils/auth'
+import { authOptions } from '../../interface/auth.options'
 
 export const UFacultyRoutes = Router()
 
-UFacultyRoutes.get('/',auth(), uFacultiesGet)
+UFacultyRoutes.get('/',auth(authOptions.admin), uFacultiesGet)
 
 UFacultyRoutes.get('/:id', uFacultyGet)
 

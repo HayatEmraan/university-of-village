@@ -12,14 +12,15 @@ const loginUser: RequestHandler = catchAsync(async (req, res) => {
   })
 })
 
-// const accessToken: RequestHandler = catchAsync(async (req, res) => {
-//   return globalResponseHandler(res, {
-//     status: 200,
-//     success: true,
-//     message: 'User logged in successfully',
-//     data: null,
-//   })
-// })
+const changePassword: RequestHandler = catchAsync(async (req, res) => {
+  const { userId } = req.user
+  return globalResponseHandler(res, {
+    status: 200,
+    success: true,
+    message: 'Password changed successfully',
+    data: await AuthService.changePassword(userId, req.body),
+  })
+})
 
 const refreshToken: RequestHandler = catchAsync(async (req, res) => {
   return globalResponseHandler(res, {
@@ -32,6 +33,6 @@ const refreshToken: RequestHandler = catchAsync(async (req, res) => {
 
 export const AuthController = {
   loginUser,
-//   accessToken,
+  changePassword,
   refreshToken,
 }

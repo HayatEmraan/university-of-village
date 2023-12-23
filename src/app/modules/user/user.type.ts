@@ -8,6 +8,7 @@ export type TUser = {
   role: 'student' | 'admin' | 'faculty'
   status: 'active' | 'blocked'
   isDeleted: boolean
+  lastPasswordChangedAt?: Date
 }
 
 export interface IUserIn extends Model<TUser> {

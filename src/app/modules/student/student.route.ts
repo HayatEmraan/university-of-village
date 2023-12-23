@@ -7,12 +7,14 @@ import {
   studentUpdate,
   studentsGet,
 } from './student.controller'
+import { auth } from '../utils/auth'
+import { authOptions } from '../../interface/auth.options'
 
 export const StudentRoutes = Router()
 
-StudentRoutes.get('/', studentsGet)
+StudentRoutes.get('/', auth(authOptions.admin), studentsGet)
 
-StudentRoutes.get('/:id', studentGet)
+StudentRoutes.get('/:id', auth(authOptions.admin), studentGet)
 
 StudentRoutes.patch(
   '/:id',

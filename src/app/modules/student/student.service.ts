@@ -6,8 +6,8 @@ import AppError from '../../errors/appError'
 import QueryBuilder from '../../builder/QueryBuilder'
 import { searchFields } from './student.utils'
 
-export const getStudentsFromDb = async (query: Record<string, any>) => {
-  const result = new QueryBuilder(studentModel.find(), query)
+export const getStudentsFromDb = async (query: Record<string, unknown>) => {
+  const result = new QueryBuilder(studentModel.find().populate('user'), query)
     .search(searchFields)
     .filter()
     .sort()

@@ -1,8 +1,9 @@
-import { JWT_ACCESS_TOKEN } from '../../config'
+import { JWT_ACCESS_TOKEN, bcryptSaltRounds } from '../../config'
 import AppError from '../../errors/appError'
 import { userModel } from '../user/user.schema'
 import { TUserLogin } from './auth.type'
 import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
 
 const loginUser = async (payload: TUserLogin) => {
   const user = await userModel.isUserExit(payload?.id)
@@ -32,9 +33,47 @@ const loginUser = async (payload: TUserLogin) => {
   }
 }
 
-const refreshToken = async (payload: string) => {}
+const changePassword = async (
+  id: string,
+  payload: {
+    oldPassword: string
+    password: string
+  },
+) => {
+  const user = await userModel.isUserExit(id)
+
+  if (user) {
+    const isPasswordMatch = await userModel.isPasswordMatch(
+      payload?.oldPassword,
+      user.password,
+    )
+    if (!isPasswordMatch) {
+      throw new AppError(403, 'Password not match')
+    }
+  }
+
+  const cryptoPassword = await bcrypt.hash(
+    payload?.password,
+    Number(bcryptSaltRounds),
+  )
+
+  await userModel.findOneAndUpdate(
+    { id },
+    {
+      password: cryptoPassword,
+      needsPasswordChange: false,
+      lastPasswordChangedAt: new Date(),
+    },
+  )
+  return true
+}
+
+const refreshToken = async (payload: string) => {
+  return payload
+}
 
 export const AuthService = {
   loginUser,
   refreshToken,
+  changePassword,
 }

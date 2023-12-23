@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 export const AdminValidation = z.object({
   body: z.object({
+    password: z.string().optional(),
     admin: z.object({
       name: z.object({
         firstName: z
