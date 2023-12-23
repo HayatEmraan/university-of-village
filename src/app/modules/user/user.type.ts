@@ -14,4 +14,5 @@ export type TUser = {
 export interface IUserIn extends Model<TUser> {
   isUserExit(id: string): Promise<TUser | null>
   isPasswordMatch(plainText: string, hashPassword: string): Promise<boolean>
+  isTokenALive(issueAt: number, changedAt: Date): void
 }

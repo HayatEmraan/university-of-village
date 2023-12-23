@@ -1,6 +1,10 @@
 import { Router } from 'express'
 import { requestValidate } from '../utils/requestValidate'
-import { changePasswordValidation, loginValidation } from './auth.validation'
+import {
+  changePasswordValidation,
+  loginValidation,
+  refreshTokenValidation,
+} from './auth.validation'
 import { AuthController } from './auth.controller'
 import { auth } from '../utils/auth'
 import { authOptions } from '../../interface/auth.options'
@@ -20,4 +24,8 @@ AuthRoutes.post(
   AuthController.changePassword,
 )
 
-AuthRoutes.get('/refresh-token', AuthController.refreshToken)
+AuthRoutes.post(
+  '/refresh-token',
+  requestValidate(refreshTokenValidation),
+  AuthController.refreshToken,
+)

@@ -23,7 +23,7 @@ export const userSchema = new Schema<TUser, IUserIn>(
     },
     isDeleted: { type: Boolean, required: true, default: false },
     lastPasswordChangedAt: {
-      type: Date
+      type: Date,
     },
   },
   {
@@ -66,6 +66,12 @@ userSchema.statics.isPasswordMatch = async function (
   hashPassword: string,
 ) {
   return await bcrypt.compare(plainText, hashPassword)
+}
+
+userSchema.statics.isTokenALive = function (issueAt: number, changedAt: Date) {
+  if (issueAt < new Date(changedAt).getTime() / 1000) {
+    throw new AppError(401, 'Token expired')
+  }
 }
 
 export const userModel = model<TUser, IUserIn>('user', userSchema)

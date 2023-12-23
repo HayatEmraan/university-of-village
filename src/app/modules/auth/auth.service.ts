@@ -1,9 +1,14 @@
-import { JWT_ACCESS_TOKEN, bcryptSaltRounds } from '../../config'
+import {
+  JWT_ACCESS_TOKEN,
+  JWT_REFRESH_TOKEN,
+  bcryptSaltRounds,
+} from '../../config'
 import AppError from '../../errors/appError'
 import { userModel } from '../user/user.schema'
 import { TUserLogin } from './auth.type'
-import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
+import { createToken } from './auth.utils'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 
 const loginUser = async (payload: TUserLogin) => {
   const user = await userModel.isUserExit(payload?.id)
@@ -23,12 +28,16 @@ const loginUser = async (payload: TUserLogin) => {
     role: user?.role,
   }
 
-  const accessToken = await jwt.sign(jwtPayload, JWT_ACCESS_TOKEN as string, {
-    expiresIn: '1d',
-  })
+  const accessToken = createToken(jwtPayload, JWT_ACCESS_TOKEN as string, '1h')
+  const refreshToken = createToken(
+    jwtPayload,
+    JWT_REFRESH_TOKEN as string,
+    '7d',
+  )
 
   return {
     accessToken,
+    refreshToken,
     needPasswordChange: user?.needsPasswordChange,
   }
 }
@@ -68,8 +77,32 @@ const changePassword = async (
   return true
 }
 
-const refreshToken = async (payload: string) => {
-  return payload
+const refreshToken = async (token: string) => {
+  if (!token) {
+    throw new AppError(401, 'Not authorized')
+  }
+  const verifyUser = (await jwt.verify(
+    token,
+    JWT_REFRESH_TOKEN as string,
+  )) as JwtPayload
+
+  const { userId, iat } = verifyUser
+
+  const user = await userModel.isUserExit(userId)
+  if (user?.lastPasswordChangedAt) {
+    await userModel.isTokenALive(
+      iat as number,
+      user?.lastPasswordChangedAt as Date,
+    )
+  }
+
+  const jwtPayload = {
+    userId: user?.id,
+    role: user?.role,
+  }
+
+  const accessToken = createToken(jwtPayload, JWT_ACCESS_TOKEN as string, '1h')
+  return accessToken
 }
 
 export const AuthService = {

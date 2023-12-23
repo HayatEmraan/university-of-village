@@ -4,6 +4,7 @@ import { catchAsync } from './catchAsync'
 import AppError from '../../errors/appError'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { TAuthOptions } from '../../interface/auth.options'
+import { userModel } from '../user/user.schema'
 
 export const auth = (...roles: TAuthOptions[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -11,8 +12,21 @@ export const auth = (...roles: TAuthOptions[]) => {
     if (!token) {
       throw new AppError(401, 'Not authorized')
     }
-    const verifyUser = await jwt.verify(token, JWT_ACCESS_TOKEN as string)
-    const roleIncludes = roles.includes((verifyUser as JwtPayload).role)
+    const verifyUser = (await jwt.verify(
+      token,
+      JWT_ACCESS_TOKEN as string,
+    )) as JwtPayload
+
+    const { userId, role, iat } = verifyUser
+
+    const user = await userModel.isUserExit(userId)
+    if (user?.lastPasswordChangedAt) {
+      await userModel.isTokenALive(
+        iat as number,
+        user?.lastPasswordChangedAt as Date,
+      )
+    }
+    const roleIncludes = roles.includes(role)
     if (!roleIncludes) {
       throw new AppError(403, 'Not authorized')
     }

@@ -4,11 +4,28 @@ import { globalResponseHandler } from '../utils/globalResponseHandler'
 import { AuthService } from './auth.service'
 
 const loginUser: RequestHandler = catchAsync(async (req, res) => {
+  const { accessToken, refreshToken, needPasswordChange } =
+    await AuthService.loginUser(req.body)
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    sameSite: 'none',
+    secure: false,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  })
+  res.cookie('accessToken', accessToken, {
+    httpOnly: true,
+    sameSite: 'none',
+    secure: false,
+    maxAge: 60 * 60 * 1000,
+  })
   return globalResponseHandler(res, {
     status: 200,
     success: true,
     message: 'User logged in successfully',
-    data: await AuthService.loginUser(req.body),
+    data: {
+      accessToken,
+      needPasswordChange,
+    },
   })
 })
 
@@ -23,11 +40,19 @@ const changePassword: RequestHandler = catchAsync(async (req, res) => {
 })
 
 const refreshToken: RequestHandler = catchAsync(async (req, res) => {
+  const { refreshToken } = req.cookies
+  const accessToken = await AuthService.refreshToken(refreshToken)
+  res.cookie('accessToken', accessToken, {
+    httpOnly: true,
+    sameSite: 'none',
+    secure: false,
+    maxAge: 60 * 60 * 1000,
+  })
   return globalResponseHandler(res, {
     status: 200,
     success: true,
     message: 'User logged in successfully',
-    data: await AuthService.refreshToken(req.body),
+    data: accessToken,
   })
 })
 

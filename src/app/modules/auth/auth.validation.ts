@@ -13,3 +13,9 @@ export const changePasswordValidation = z.object({
     password: z.string().min(1, 'Password is required'),
   }),
 })
+
+export const refreshTokenValidation = z.object({
+  cookies: z.object({
+    refreshToken: z.string().min(1, 'Refresh Token is required'),
+  }),
+})
