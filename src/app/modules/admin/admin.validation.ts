@@ -3,14 +3,6 @@ import { z } from 'zod'
 export const AdminValidation = z.object({
   body: z.object({
     admin: z.object({
-      id: z.string({
-        required_error: 'id is required',
-        invalid_type_error: 'id must be a string',
-      }),
-      user: z.string({
-        required_error: 'user is required',
-        invalid_type_error: 'user must be a string',
-      }),
       name: z.object({
         firstName: z
           .string({
@@ -32,7 +24,7 @@ export const AdminValidation = z.object({
           .min(3),
       }),
       gender: z.enum(['female', 'male', 'other']),
-      dateOfBirth: z.date(),
+      dateOfBirth: z.string().optional(),
       email: z.string({
         required_error: 'email is required',
         invalid_type_error: 'email must be a string',

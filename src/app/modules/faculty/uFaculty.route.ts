@@ -7,10 +7,11 @@ import {
 } from './uFaculty.controller'
 import { requestValidate } from '../utils/requestValidate'
 import { updateUFacultyValidation } from './uFaculty.validation'
+import { auth } from '../utils/auth'
 
 export const UFacultyRoutes = Router()
 
-UFacultyRoutes.get('/', uFacultiesGet)
+UFacultyRoutes.get('/',auth(), uFacultiesGet)
 
 UFacultyRoutes.get('/:id', uFacultyGet)
 

@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+import { Model } from 'mongoose'
+
 export type TUser = {
   id: string
   password: string
@@ -5,4 +8,9 @@ export type TUser = {
   role: 'student' | 'admin' | 'faculty'
   status: 'active' | 'blocked'
   isDeleted: boolean
+}
+
+export interface IUserIn extends Model<TUser> {
+  isUserExit(id: string): Promise<TUser | null>
+  isPasswordMatch(plainText: string, hashPassword: string): Promise<boolean>
 }

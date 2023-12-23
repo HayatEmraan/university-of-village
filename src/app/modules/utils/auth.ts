@@ -1,12 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
-import { AnyZodObject } from 'zod'
 import { catchAsync } from './catchAsync'
 
-export const requestValidate = (schema: AnyZodObject) => {
+export const auth = () => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    await schema.parseAsync({
-      body: req.body,
-    })
+    console.log(req.headers.authorization)
     next()
   })
 }

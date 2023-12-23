@@ -3,8 +3,6 @@ import { z } from 'zod'
 export const UFacultyValidation = z.object({
   body: z.object({
     faculty: z.object({
-      id: z.string(),
-      user: z.string(),
       name: z.object({
         firstName: z
           .string({
@@ -26,7 +24,7 @@ export const UFacultyValidation = z.object({
           .min(3),
       }),
       gender: z.enum(['female', 'male', 'other']),
-      dateOfBirth: z.date(),
+      dateOfBirth: z.string().optional(),
       email: z.string().email(),
       contactNo: z.string().max(15),
       emergencyContactNo: z.string().max(15),

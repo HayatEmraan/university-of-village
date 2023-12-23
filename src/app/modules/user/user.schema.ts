@@ -1,9 +1,10 @@
 import { Schema, model } from 'mongoose'
-import { TUser } from './user.type'
+import { IUserIn, TUser } from './user.type'
 import bcrypt from 'bcrypt'
 import { bcryptSaltRounds } from '../../config'
+import AppError from '../../errors/appError'
 
-export const userSchema = new Schema<TUser>(
+export const userSchema = new Schema<TUser, IUserIn>(
   {
     id: { type: String, required: true },
     password: { type: String, required: true },
@@ -33,4 +34,31 @@ userSchema.pre('save', async function (next) {
   next()
 })
 
-export const userModel = model<TUser>('user', userSchema)
+userSchema.statics.isUserExit = async function (id: string) {
+  const user = await userModel.findOne({
+    $and: [
+      {
+        id: id,
+      },
+      {
+        isDeleted: false,
+      },
+    ],
+  })
+  if (!user) {
+    throw new AppError(404, 'User not found')
+  }
+
+  if (user.status === 'blocked') {
+    throw new AppError(404, 'User is blocked')
+  }
+
+  return user
+}
+
+
+userSchema.statics.isPasswordMatch = async function (plainText: string, hashPassword: string) {
+  return await bcrypt.compare(plainText, hashPassword)
+}
+
+export const userModel = model<TUser, IUserIn>('user', userSchema)
