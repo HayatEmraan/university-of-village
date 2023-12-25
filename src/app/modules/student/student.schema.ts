@@ -1,4 +1,4 @@
-import mongoose, { Schema, model } from 'mongoose'
+import { Schema, model } from 'mongoose'
 import { TStudent } from './student.type'
 import { AcademicSemesterModel } from '../academicSemester/academic.schema'
 import { departmentModel } from '../academicDepartment/department.schema'
@@ -95,21 +95,6 @@ studentSchema.pre('find', async function (next) {
   next()
 })
 
-studentSchema.pre('findOne', async function (next) {
-  const value = await this.model.aggregate([
-    {
-      $match: {
-        _id: new mongoose.Types.ObjectId(this.getQuery()._id),
-        isDeleted: {
-          $ne: true,
-        },
-      },
-    },
-  ])
-  if (value.length === 0) {
-    throw new AppError(404, 'Student not found')
-  }
-  next()
-})
+
 
 export const studentModel = model<TStudent>('student', studentSchema)

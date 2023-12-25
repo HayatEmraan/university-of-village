@@ -3,6 +3,8 @@ import {
   CreateAdminUser,
   CreateFaculty,
   CreateStudent,
+  changeStatus,
+  getMe,
 } from './user.controller'
 import { requestValidate } from '../utils/requestValidate'
 import { AdminValidation } from '../admin/admin.validation'
@@ -10,6 +12,7 @@ import { facultyValidation } from '../academicFaculty/faculty.validation'
 import { studentSchemaValidation } from '../student/student.validation'
 import { auth } from '../utils/auth'
 import { authOptions } from '../../interface/auth.options'
+import { changeStatusValidation } from './user.validation'
 
 export const UserRoutes = express.Router()
 
@@ -32,4 +35,17 @@ UserRoutes.post(
   auth(authOptions.admin),
   requestValidate(AdminValidation),
   CreateAdminUser,
+)
+
+UserRoutes.get(
+  '/me',
+  auth(authOptions.admin, authOptions.student, authOptions.faculty),
+  getMe,
+)
+
+UserRoutes.post(
+  '/change-status/:id',
+  auth(authOptions.admin),
+  requestValidate(changeStatusValidation),
+  changeStatus,
 )

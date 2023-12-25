@@ -66,11 +66,12 @@ const resetLink = catchAsync(async (req, res) => {
 })
 
 const forgetPassword = catchAsync(async (req, res) => {
+  const token = req.headers?.authorization as string
   return globalResponseHandler(res, {
     status: 200,
     success: true,
-    message: 'Password reset link sent successfully',
-    data: await AuthService.forgetPassword(req.body),
+    message: 'Password reset successfully',
+    data: await AuthService.forgetPassword(token, req.body),
   })
 })
 

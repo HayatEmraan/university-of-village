@@ -1,5 +1,5 @@
 import { Request, RequestHandler, Response } from 'express'
-import { CreateAdmin, CreateFacultyUR, CreateStudentUR } from './user.service'
+import { CreateAdmin, CreateFacultyUR, CreateStudentUR, changeStatusById, getMeById } from './user.service'
 import { globalResponseHandler } from '../utils/globalResponseHandler'
 import { catchAsync } from '../utils/catchAsync'
 
@@ -34,5 +34,25 @@ export const CreateAdminUser: RequestHandler = catchAsync(async (req, res) => {
     success: true,
     message: 'Admin created successfully',
     data: result,
+  })
+})
+
+export const getMe = catchAsync(async (req, res) => {
+  const { userId, role } = req.user
+  return globalResponseHandler(res, {
+    status: 200,
+    success: true,
+    message: 'User retrieved successfully',
+    data: await getMeById(userId, role),
+  })
+})
+
+
+export const changeStatus = catchAsync(async (req, res) => {
+  return globalResponseHandler(res, {
+    status: 200,
+    success: true,
+    message: 'User status changed successfully',
+    data: await changeStatusById(req.params.id, req.body),
   })
 })

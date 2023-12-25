@@ -9,3 +9,9 @@ export const userSchemaValidation = z.object({
     .min(8)
     .optional(),
 })
+
+export const changeStatusValidation = z.object({
+  body: z.object({
+    status: z.enum(['active', 'blocked']),
+  }),
+})

@@ -117,3 +117,26 @@ export const CreateAdmin = async (password: string, admin: TAdmin) => {
     throw new AppError(501, 'Admin not created')
   }
 }
+
+export const getMeById = async (id: string, role: string) => {
+  if (role === 'student')
+    return await studentModel
+      .findOne({ id })
+      .populate('academicSemester')
+      .populate('academicDepartment')
+      .populate('user')
+  if (role === 'admin') return await AdminModel.findOne({ id }).populate('user')
+  if (role === 'faculty')
+    return await UFacultyModel.findOne({ id }).populate('user')
+}
+
+export const changeStatusById = async (
+  id: string,
+  status: { status: string },
+) => {
+  const isExit = await userModel.findOne({ _id: id, isDeleted: false })
+  if (!isExit) {
+    throw new AppError(404, 'User not found')
+  }
+  return await userModel.findByIdAndUpdate(id, status, { new: true })
+}

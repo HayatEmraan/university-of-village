@@ -14,7 +14,7 @@ export const StudentRoutes = Router()
 
 StudentRoutes.get('/', auth(authOptions.admin), studentsGet)
 
-StudentRoutes.get('/:id', auth(authOptions.admin), studentGet)
+StudentRoutes.get('/:id', auth(authOptions.admin, authOptions.faculty), studentGet)
 
 StudentRoutes.patch(
   '/:id',

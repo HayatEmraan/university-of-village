@@ -32,7 +32,14 @@ AuthRoutes.post(
   AuthController.refreshToken,
 )
 
+AuthRoutes.post(
+  '/reset-link',
+  requestValidate(resetLinkValidation),
+  AuthController.resetLink,
+)
 
-AuthRoutes.post("/reset-link", requestValidate(resetLinkValidation), AuthController.resetLink)
-
-AuthRoutes.post("/forget-password", requestValidate(forgetPasswordValidation), AuthController.forgetPassword)
+AuthRoutes.post(
+  '/reset-password',
+  requestValidate(forgetPasswordValidation),
+  AuthController.forgetPassword,
+)

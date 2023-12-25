@@ -18,6 +18,10 @@ export const getStudentsFromDb = async (query: Record<string, unknown>) => {
 }
 
 export const getSingleStudentFromDb = async (id: string) => {
+  const value = await studentModel.findOne({ _id: id, isDeleted: false })
+  if (!value) {
+    throw new AppError(404, 'Student not found')
+  }
   return await studentModel
     .findById(id)
     .populate('academicSemester')
