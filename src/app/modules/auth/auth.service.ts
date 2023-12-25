@@ -1,6 +1,8 @@
 import {
   JWT_ACCESS_TOKEN,
   JWT_REFRESH_TOKEN,
+  JWT_RESET_TOKEN,
+  RESET_UI_LINK,
   bcryptSaltRounds,
 } from '../../config'
 import AppError from '../../errors/appError'
@@ -9,6 +11,7 @@ import { TUserLogin } from './auth.type'
 import bcrypt from 'bcrypt'
 import { createToken } from './auth.utils'
 import jwt, { JwtPayload } from 'jsonwebtoken'
+import { sendEmail } from '../utils/sendEmail'
 
 const loginUser = async (payload: TUserLogin) => {
   const user = await userModel.isUserExit(payload?.id)
@@ -105,8 +108,38 @@ const refreshToken = async (token: string) => {
   return accessToken
 }
 
+const resetLink = async (payload: { id: string }) => {
+  const user = await userModel.isUserExit(payload?.id)
+  if (!user) {
+    throw new AppError(404, 'User not found')
+  }
+  const jwtPayload = {
+    userId: user?.id,
+    role: user?.role,
+  }
+  const token = createToken(jwtPayload, JWT_RESET_TOKEN as string, '10m')
+  const resetLink = `${RESET_UI_LINK}/reset-password/?id=${user?.id}&token=${token}`
+  await sendEmail(user?.email, resetLink)
+}
+
+const forgetPassword = async (payload: { id: string }) => {
+  const user = await userModel.isUserExit(payload?.id)
+  if (!user) {
+    throw new AppError(404, 'User not found')
+  }
+  const jwtPayload = {
+    userId: user?.id,
+    role: user?.role,
+  }
+  const token = createToken(jwtPayload, JWT_RESET_TOKEN as string, '10m')
+  const resetLink = `http://localhost:3000/reset-password/?id=${user?.id}&token=${token}`
+  return resetLink
+}
+
 export const AuthService = {
   loginUser,
   refreshToken,
   changePassword,
+  resetLink,
+  forgetPassword,
 }

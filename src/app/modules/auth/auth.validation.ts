@@ -19,3 +19,16 @@ export const refreshTokenValidation = z.object({
     refreshToken: z.string().min(1, 'Refresh Token is required'),
   }),
 })
+
+export const resetLinkValidation = z.object({
+  body: z.object({
+    id: z.string().min(1, 'Id is required'),
+  }),
+})
+
+export const forgetPasswordValidation = z.object({
+  body: z.object({
+    id: z.string().min(1, 'Id is required'),
+    password: z.string().min(1, 'Password is required'),
+  }),
+})

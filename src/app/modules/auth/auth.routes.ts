@@ -2,8 +2,10 @@ import { Router } from 'express'
 import { requestValidate } from '../utils/requestValidate'
 import {
   changePasswordValidation,
+  forgetPasswordValidation,
   loginValidation,
   refreshTokenValidation,
+  resetLinkValidation,
 } from './auth.validation'
 import { AuthController } from './auth.controller'
 import { auth } from '../utils/auth'
@@ -29,3 +31,8 @@ AuthRoutes.post(
   requestValidate(refreshTokenValidation),
   AuthController.refreshToken,
 )
+
+
+AuthRoutes.post("/reset-link", requestValidate(resetLinkValidation), AuthController.resetLink)
+
+AuthRoutes.post("/forget-password", requestValidate(forgetPasswordValidation), AuthController.forgetPassword)

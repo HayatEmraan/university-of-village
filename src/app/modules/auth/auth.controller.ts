@@ -56,8 +56,28 @@ const refreshToken: RequestHandler = catchAsync(async (req, res) => {
   })
 })
 
+const resetLink = catchAsync(async (req, res) => {
+  return globalResponseHandler(res, {
+    status: 200,
+    success: true,
+    message: 'Password reset link sent successfully',
+    data: await AuthService.resetLink(req.body),
+  })
+})
+
+const forgetPassword = catchAsync(async (req, res) => {
+  return globalResponseHandler(res, {
+    status: 200,
+    success: true,
+    message: 'Password reset link sent successfully',
+    data: await AuthService.forgetPassword(req.body),
+  })
+})
+
 export const AuthController = {
   loginUser,
   changePassword,
   refreshToken,
+  forgetPassword,
+  resetLink,
 }

@@ -6,7 +6,8 @@ import AppError from '../../errors/appError'
 
 export const userSchema = new Schema<TUser, IUserIn>(
   {
-    id: { type: String, required: true },
+    id: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
     password: { type: String, required: true, select: false },
     needsPasswordChange: { type: Boolean, required: true, default: true },
     role: {

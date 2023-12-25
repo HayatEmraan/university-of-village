@@ -25,6 +25,7 @@ export const CreateStudentUR = async (password: string, student: TStudent) => {
     ).session(session)
     const user = {
       id: await generateId(findSemester as TAcademicSemester),
+      email: student?.email,
       password: password || randomPass(),
     }
     const insertUser = await userModel.create([user], { session })
@@ -56,6 +57,7 @@ export const CreateFacultyUR = async (password: string, faculty: TUFaculty) => {
       [
         {
           id: await generateFacultyId(),
+          email: faculty?.email,
           password: password || randomPass(),
           role: 'faculty',
         },
@@ -91,6 +93,7 @@ export const CreateAdmin = async (password: string, admin: TAdmin) => {
       [
         {
           id: await generateAdminId(),
+          email: admin?.email,
           password: password || randomPass(),
           role: 'admin',
         },
