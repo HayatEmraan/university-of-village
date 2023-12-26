@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 import cors from 'cors'
 export const app: Application = express()
 
+
 // body parser middleware
 app.use(express.json())
 app.use(cookieParser())

@@ -11,3 +11,6 @@ export const JWT_RESET_TOKEN = process.env.JWT_RESET_TOKEN
 export const NODE_MAILER_SENDER = process.env.NODE_MAILER_SENDER
 export const NODE_MAILER_PASS = process.env.NODE_MAILER_PASS
 export const RESET_UI_LINK = process.env.RESET_UI_LINK
+export const CLOUDINARY_SECRET = process.env.CLOUDINARY_SECRET
+export const CLOUDINARY_API = process.env.CLOUDINARY_API
+export const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME

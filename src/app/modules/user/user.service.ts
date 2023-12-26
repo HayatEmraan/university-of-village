@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from 'mongoose'
 import { TAcademicSemester } from '../academicSemester/academic.interface'
 import { AcademicSemesterModel } from '../academicSemester/academic.schema'
@@ -15,8 +16,13 @@ import { TUFaculty } from '../faculty/uFaculty.type'
 import { UFacultyModel } from '../faculty/uFaculty.schema'
 import { TAdmin } from '../admin/admin.interface'
 import { AdminModel } from '../admin/admin.schema'
+import { uploadImage } from '../utils/uploadImage'
 
-export const CreateStudentUR = async (password: string, student: TStudent) => {
+export const CreateStudentUR = async (
+  password: string,
+  student: TStudent,
+  file: any,
+) => {
   const session = await mongoose.startSession()
   try {
     await session.startTransaction()
@@ -29,12 +35,17 @@ export const CreateStudentUR = async (password: string, student: TStudent) => {
       password: password || randomPass(),
     }
     const insertUser = await userModel.create([user], { session })
+    const image = await uploadImage(
+      `${student?.name?.firstName}-${user?.id}`,
+      file.path,
+    )
     const createStudent = await studentModel.create(
       [
         {
           ...student,
           user: insertUser[0]._id,
           id: insertUser[0].id,
+          profileImage: image.secure_url,
         },
       ],
       { session },
@@ -49,20 +60,24 @@ export const CreateStudentUR = async (password: string, student: TStudent) => {
   }
 }
 
-export const CreateFacultyUR = async (password: string, faculty: TUFaculty) => {
+export const CreateFacultyUR = async (
+  password: string,
+  faculty: TUFaculty,
+  file: any,
+) => {
   const session = await mongoose.startSession()
   try {
     await session.startTransaction()
-    const createUserFaculty = await userModel.create(
-      [
-        {
-          id: await generateFacultyId(),
-          email: faculty?.email,
-          password: password || randomPass(),
-          role: 'faculty',
-        },
-      ],
-      { session },
+    const user = {
+      id: await generateFacultyId(),
+      email: faculty?.email,
+      password: password || randomPass(),
+      role: 'faculty',
+    }
+    const createUserFaculty = await userModel.create([user], { session })
+    const image = await uploadImage(
+      `${faculty?.name?.firstName}-${user?.id}`,
+      file.path,
     )
     const createFaculty = await UFacultyModel.create(
       [
@@ -70,6 +85,7 @@ export const CreateFacultyUR = async (password: string, faculty: TUFaculty) => {
           ...faculty,
           user: createUserFaculty[0]._id,
           id: createUserFaculty[0].id,
+          profileImage: image.secure_url,
         },
       ],
       { session },
@@ -85,20 +101,25 @@ export const CreateFacultyUR = async (password: string, faculty: TUFaculty) => {
   }
 }
 
-export const CreateAdmin = async (password: string, admin: TAdmin) => {
+export const CreateAdmin = async (
+  password: string,
+  admin: TAdmin,
+  file: any,
+) => {
   const session = await mongoose.startSession()
   try {
     await session.startTransaction()
-    const createUserAdmin = await userModel.create(
-      [
-        {
-          id: await generateAdminId(),
-          email: admin?.email,
-          password: password || randomPass(),
-          role: 'admin',
-        },
-      ],
-      { session },
+    const user = {
+      id: await generateAdminId(),
+      email: admin?.email,
+      password: password || randomPass(),
+      role: 'admin',
+    }
+
+    const createUserAdmin = await userModel.create([user], { session })
+    const image = await uploadImage(
+      `${admin?.name?.firstName}-${user?.id}`,
+      file.path,
     )
 
     const createAdmin = await AdminModel.create([
@@ -106,6 +127,7 @@ export const CreateAdmin = async (password: string, admin: TAdmin) => {
         ...admin,
         user: createUserAdmin[0]._id,
         id: createUserAdmin[0].id,
+        profileImage: image.secure_url,
       },
     ])
     await session.commitTransaction()

@@ -1,11 +1,17 @@
 import { Request, RequestHandler, Response } from 'express'
-import { CreateAdmin, CreateFacultyUR, CreateStudentUR, changeStatusById, getMeById } from './user.service'
+import {
+  CreateAdmin,
+  CreateFacultyUR,
+  CreateStudentUR,
+  changeStatusById,
+  getMeById,
+} from './user.service'
 import { globalResponseHandler } from '../utils/globalResponseHandler'
 import { catchAsync } from '../utils/catchAsync'
 
 export const CreateStudent = catchAsync(async (req: Request, res: Response) => {
   const { password = '', student } = req.body
-  const result = await CreateStudentUR(password, student)
+  const result = await CreateStudentUR(password, student, req.file)
 
   await globalResponseHandler(res, {
     status: 201,
@@ -17,7 +23,7 @@ export const CreateStudent = catchAsync(async (req: Request, res: Response) => {
 
 export const CreateFaculty = catchAsync(async (req: Request, res: Response) => {
   const { password = '', faculty } = req.body
-  const result = await CreateFacultyUR(password, faculty)
+  const result = await CreateFacultyUR(password, faculty, req.file)
   return res.status(201).json({
     status: 201,
     success: true,
@@ -28,7 +34,7 @@ export const CreateFaculty = catchAsync(async (req: Request, res: Response) => {
 
 export const CreateAdminUser: RequestHandler = catchAsync(async (req, res) => {
   const { password = '', admin } = req.body
-  const result = await CreateAdmin(password, admin)
+  const result = await CreateAdmin(password, admin, req.file)
   return globalResponseHandler(res, {
     status: 201,
     success: true,
@@ -46,7 +52,6 @@ export const getMe = catchAsync(async (req, res) => {
     data: await getMeById(userId, role),
   })
 })
-
 
 export const changeStatus = catchAsync(async (req, res) => {
   return globalResponseHandler(res, {
