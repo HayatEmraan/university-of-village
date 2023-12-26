@@ -32,6 +32,13 @@ export const uploadImage = async (name: string, file: string): Promise<any> => {
   })
 }
 
+export const deleteImage = (file: string) => {
+  fs.unlink(file, err => {
+    if (err) throw err
+    console.log('file deleted')
+  })
+}
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, process.cwd() + '/uploads')

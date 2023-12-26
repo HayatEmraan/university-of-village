@@ -16,7 +16,7 @@ import { TUFaculty } from '../faculty/uFaculty.type'
 import { UFacultyModel } from '../faculty/uFaculty.schema'
 import { TAdmin } from '../admin/admin.interface'
 import { AdminModel } from '../admin/admin.schema'
-import { uploadImage } from '../utils/uploadImage'
+import { deleteImage, uploadImage } from '../utils/uploadImage'
 
 export const CreateStudentUR = async (
   password: string,
@@ -54,6 +54,7 @@ export const CreateStudentUR = async (
     await session.endSession()
     return createStudent
   } catch (error) {
+    deleteImage(file.path)
     await session.abortTransaction()
     await session.endSession()
     throw new AppError(501, 'User not created')
@@ -95,6 +96,7 @@ export const CreateFacultyUR = async (
     await session.endSession()
     return createFaculty
   } catch (error) {
+    deleteImage(file.path)
     await session.abortTransaction()
     await session.endSession()
     throw new AppError(501, 'Faculty not created')
@@ -134,6 +136,7 @@ export const CreateAdmin = async (
     await session.endSession()
     return createAdmin
   } catch (error) {
+    deleteImage(file.path)
     await session.abortTransaction()
     await session.endSession()
     throw new AppError(501, 'Admin not created')
