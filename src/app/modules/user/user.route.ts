@@ -8,12 +8,12 @@ import {
 } from './user.controller'
 import { requestValidate } from '../utils/requestValidate'
 import { AdminValidation } from '../admin/admin.validation'
-import { facultyValidation } from '../academicFaculty/faculty.validation'
 import { studentSchemaValidation } from '../student/student.validation'
 import { auth } from '../utils/auth'
 import { authOptions } from '../../interface/auth.options'
 import { changeStatusValidation } from './user.validation'
 import { upload } from '../utils/uploadImage'
+import { UFacultyValidation } from '../faculty/uFaculty.validation'
 
 export const UserRoutes = express.Router()
 
@@ -37,7 +37,7 @@ UserRoutes.post(
     req.body = JSON.parse(req.body.data)
     next()
   },
-  requestValidate(facultyValidation),
+  requestValidate(UFacultyValidation),
   CreateFaculty,
 )
 

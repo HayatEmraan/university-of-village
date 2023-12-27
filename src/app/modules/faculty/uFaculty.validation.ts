@@ -28,7 +28,7 @@ export const UFacultyValidation = z.object({
       dateOfBirth: z.string().optional(),
       email: z.string().email(),
       contactNo: z.string().max(15),
-      emergencyContactNo: z.string().max(15),
+      emergencyNo: z.string().max(15),
       presentAddress: z.string(),
       permanentAddress: z.string(),
       academicDepartment: z.string(),
