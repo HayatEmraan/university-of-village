@@ -70,6 +70,11 @@ export const studentSchema = new Schema<TStudent>(
       ref: departmentModel,
       required: true,
     },
+    academicFaculty: {
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicFaculty',
+      required: true,
+    },
     profileImage: String,
     isDeleted: {
       type: Boolean,

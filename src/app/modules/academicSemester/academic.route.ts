@@ -16,17 +16,23 @@ import { authOptions } from '../../interface/auth.options'
 export const AcademicRoutes = Router()
 
 AcademicRoutes.post(
-  '/create-semester',
+  '/create-academic-semester',
+  auth(authOptions.admin, authOptions.superAdmin),
   requestValidate(AcademicSemesterValidation),
   createSemester,
 )
 
-AcademicRoutes.get('/', auth(authOptions.admin), getSemesters)
+AcademicRoutes.get(
+  '/',
+  auth(authOptions.admin, authOptions.superAdmin),
+  getSemesters,
+)
 
 AcademicRoutes.get('/:id', getSingleSemester)
 
 AcademicRoutes.patch(
   '/:id',
+  auth(authOptions.admin, authOptions.superAdmin),
   requestValidate(UpdateAcademicSemesterValidation),
   updateSemester,
 )

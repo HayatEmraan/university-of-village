@@ -29,10 +29,12 @@ const UFacultySchema = new Schema<TUFaculty>(
     academicDepartment: {
       type: Schema.Types.ObjectId,
       ref: departmentModel,
+      required: true,
     },
     academicFaculty: {
       type: Schema.Types.ObjectId,
       ref: facultyModel,
+      required: true,
     },
     designation: String,
     profileImage: String,

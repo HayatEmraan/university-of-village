@@ -7,21 +7,24 @@ import {
   getSingleAcademicFAculty,
   updateSingleFaculty,
 } from './faculty.controller'
+import { auth } from '../utils/auth'
+import { authOptions } from '../../interface/auth.options'
 
 export const FacultyRoutes = Router()
 
 FacultyRoutes.post(
-  '/create-faculty',
+  '/create-academic-faculty',
+  auth(authOptions.admin, authOptions.superAdmin),
   requestValidate(facultyValidation),
   createFaculty,
 )
 
-FacultyRoutes.get('/get-faculties', AcademicFaculties)
+FacultyRoutes.get('/get-academic-faculties', AcademicFaculties)
 
-FacultyRoutes.get('/get-faculty/:id', getSingleAcademicFAculty)
+FacultyRoutes.get('/get-academic-faculty/:id', getSingleAcademicFAculty)
 
 FacultyRoutes.patch(
-  '/update-faculty/:id',
+  '/update-academic-faculty/:id',
   requestValidate(facultyValidation),
   updateSingleFaculty,
 )

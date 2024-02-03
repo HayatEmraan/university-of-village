@@ -17,6 +17,7 @@ import { UFacultyModel } from '../faculty/uFaculty.schema'
 import { TAdmin } from '../admin/admin.interface'
 import { AdminModel } from '../admin/admin.schema'
 import { deleteImage, uploadImage } from '../utils/uploadImage'
+import { departmentModel } from '../academicDepartment/department.schema'
 
 export const CreateStudentUR = async (
   password: string,
@@ -29,35 +30,66 @@ export const CreateStudentUR = async (
     const findSemester = await AcademicSemesterModel.findById(
       student.academicSemester,
     ).session(session)
+
+    if (!findSemester) {
+      throw new AppError(404, 'Semester not found')
+    }
+
+    const findDepartment = await departmentModel
+      .findById(student.academicDepartment)
+      .session(session)
+
+    if (!findDepartment) {
+      throw new AppError(404, 'Department not found')
+    }
+
     const user = {
       id: await generateId(findSemester as TAcademicSemester),
       email: student?.email,
       password: password || randomPass(),
     }
     const insertUser = await userModel.create([user], { session })
-    const image = await uploadImage(
-      `${student?.name?.firstName}-${user?.id}`,
-      file.path,
-    )
+
+    if (!insertUser) {
+      throw new AppError(400, 'Failed to create user')
+    }
+
+    let image
+
+    if (file) {
+      image = await uploadImage(
+        `${student?.name?.firstName}-${user?.id}`,
+        file.path,
+      )
+    }
+
     const createStudent = await studentModel.create(
       [
         {
           ...student,
           user: insertUser[0]._id,
           id: insertUser[0].id,
-          profileImage: image.secure_url,
+          academicFaculty: findDepartment.academicFaculty,
+          profileImage: image?.secure_url || '',
         },
       ],
       { session },
     )
+
+    if (!createStudent) {
+      throw new AppError(400, 'Failed to create student')
+    }
+
     await session.commitTransaction()
     await session.endSession()
     return createStudent
-  } catch (error) {
-    deleteImage(file.path)
+  } catch (error: AppError | any) {
+    if (file) {
+      deleteImage(file.path)
+    }
     await session.abortTransaction()
     await session.endSession()
-    throw new AppError(501, 'User not created')
+    throw new AppError(error.statusCode || 500, error.message)
   }
 }
 
@@ -69,6 +101,15 @@ export const CreateFacultyUR = async (
   const session = await mongoose.startSession()
   try {
     await session.startTransaction()
+
+    const findDepartment = await departmentModel
+      .findById(faculty.academicDepartment)
+      .session(session)
+
+    if (!findDepartment) {
+      throw new AppError(404, ' Academic Department not found')
+    }
+
     const user = {
       id: await generateFacultyId(),
       email: faculty?.email,
@@ -76,30 +117,46 @@ export const CreateFacultyUR = async (
       role: 'faculty',
     }
     const createUserFaculty = await userModel.create([user], { session })
-    const image = await uploadImage(
-      `${faculty?.name?.firstName}-${user?.id}`,
-      file.path,
-    )
+
+    if (!createUserFaculty) {
+      throw new AppError(400, 'Failed to create user')
+    }
+
+    let image
+
+    if (file) {
+      image = await uploadImage(
+        `${faculty?.name?.firstName}-${user?.id}`,
+        file.path,
+      )
+    }
     const createFaculty = await UFacultyModel.create(
       [
         {
           ...faculty,
           user: createUserFaculty[0]._id,
           id: createUserFaculty[0].id,
-          profileImage: image.secure_url,
+          profileImage: image?.secure_url || '',
+          academicFaculty: findDepartment.academicFaculty,
         },
       ],
       { session },
     )
 
+    if (!createFaculty) {
+      throw new AppError(400, 'Failed to create faculty')
+    }
+
     await session.commitTransaction()
     await session.endSession()
     return createFaculty
-  } catch (error: any) {
-    deleteImage(file.path)
+  } catch (error: AppError | any) {
+    if (file) {
+      deleteImage(file.path)
+    }
     await session.abortTransaction()
     await session.endSession()
-    throw new AppError(501, error.message)
+    throw new AppError(error.statusCode || 500, error.message)
   }
 }
 
@@ -119,27 +176,40 @@ export const CreateAdmin = async (
     }
 
     const createUserAdmin = await userModel.create([user], { session })
-    const image = await uploadImage(
-      `${admin?.name?.firstName}-${user?.id}`,
-      file.path,
-    )
+
+    if (!createUserAdmin) {
+      throw new AppError(400, 'Failed to create user')
+    }
+    let image
+    if (file) {
+      image = await uploadImage(
+        `${admin?.name?.firstName}-${user?.id}`,
+        file.path,
+      )
+    }
 
     const createAdmin = await AdminModel.create([
       {
         ...admin,
         user: createUserAdmin[0]._id,
         id: createUserAdmin[0].id,
-        profileImage: image.secure_url,
+        profileImage: image?.secure_url || '',
       },
     ])
+
+    if (!createAdmin) {
+      throw new AppError(400, 'Failed to create admin')
+    }
     await session.commitTransaction()
     await session.endSession()
     return createAdmin
-  } catch (error) {
-    deleteImage(file.path)
+  } catch (error: AppError | any) {
+    if (file) {
+      deleteImage(file.path)
+    }
     await session.abortTransaction()
     await session.endSession()
-    throw new AppError(501, 'Admin not created')
+    throw new AppError(error.statusCode || 500, error.message)
   }
 }
 

@@ -18,6 +18,19 @@ export const GetCourses = async function (query: Record<string, unknown>) {
 }
 
 export const CreateCourse = async (payload: TCourse) => {
+  const { preRequisiteCourses } = payload
+
+  const preRequisiteCoursesAdded = preRequisiteCourses.map((el) => el.course)
+
+  const findCourse = await CourseModel.find({
+    _id: {
+      $in: preRequisiteCoursesAdded,
+    },
+  })
+
+  if (findCourse.length !== preRequisiteCoursesAdded.length) {
+    throw new AppError(400, 'Course not found')
+  }
   return CourseModel.create(payload)
 }
 
