@@ -13,10 +13,6 @@ app.use(morgan('dev'))
 app.use(cors({ origin: 'http://localhost:5173', credentials: true }))
 app.use(express.urlencoded({ extended: true }))
 
-const x = "something";
-
-const xy;
-
 app.use('/api/v1', router)
 
 app.get('/', (req, res) => {
@@ -34,3 +30,6 @@ app.get('*', (req, res) => {
 })
 
 app.use(globalErrorHandler)
+
+
+const x;
