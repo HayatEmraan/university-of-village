@@ -32,4 +32,3 @@ app.get('*', (req, res) => {
 app.use(globalErrorHandler)
 
 
-const x;
