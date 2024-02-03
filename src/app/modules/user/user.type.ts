@@ -6,7 +6,7 @@ export type TUser = {
   email: string
   password: string
   needsPasswordChange: boolean
-  role: 'student' | 'admin' | 'faculty'
+  role: 'student' | 'admin' | 'faculty' | 'superAdmin'
   status: 'active' | 'blocked'
   isDeleted: boolean
   lastPasswordChangedAt?: Date
