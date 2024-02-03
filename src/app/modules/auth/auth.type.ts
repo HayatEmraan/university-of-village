@@ -1,4 +1,4 @@
 export type TUserLogin = {
-    id: string
-    password: string
+  id: string
+  password: string
 }

@@ -9,6 +9,7 @@ import { handleValidationError } from '../errors/handleValidationError'
 import { handleCastError } from '../errors/handleCastError'
 import { handleDuplicateError } from '../errors/handleDuplicateError'
 import AppError from '../errors/appError'
+import { JsonWebTokenError } from 'jsonwebtoken'
 
 export const globalErrorHandler: ErrorRequestHandler = async (
   error,
@@ -16,9 +17,10 @@ export const globalErrorHandler: ErrorRequestHandler = async (
   res,
   next,
 ) => {
-  let message = 'Something went wrong'
+  let message = error.message || 'Something went wrong'
   let errStack = error
-  
+  let status
+
   if (error instanceof ZodError) {
     const err = handleZodError(error)
     message = err.message
@@ -35,9 +37,12 @@ export const globalErrorHandler: ErrorRequestHandler = async (
   } else if (error instanceof AppError) {
     message = error.message
     errStack = error
+  } else if (error instanceof JsonWebTokenError) {
+    errStack = error
+    status = 401
   }
 
-  return res.status(error.statusCode || 500).json({
+  return res.status(error.statusCode || status || 500).json({
     success: false,
     message: message,
     error: errStack,

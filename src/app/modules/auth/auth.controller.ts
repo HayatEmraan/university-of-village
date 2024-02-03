@@ -8,15 +8,15 @@ const loginUser: RequestHandler = catchAsync(async (req, res) => {
     await AuthService.loginUser(req.body)
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
-    sameSite: 'none',
+    sameSite: 'strict',
     secure: false,
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    maxAge: 5 * 60 * 1000,
   })
   res.cookie('accessToken', accessToken, {
     httpOnly: true,
-    sameSite: 'none',
+    sameSite: 'strict',
     secure: false,
-    maxAge: 60 * 60 * 1000,
+    maxAge: 2 * 60 * 1000,
   })
   return globalResponseHandler(res, {
     status: 200,
@@ -51,7 +51,7 @@ const refreshToken: RequestHandler = catchAsync(async (req, res) => {
   return globalResponseHandler(res, {
     status: 200,
     success: true,
-    message: 'User logged in successfully',
+    message: 'Token refreshed successfully',
     data: accessToken,
   })
 })

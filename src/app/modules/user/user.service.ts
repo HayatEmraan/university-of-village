@@ -95,11 +95,11 @@ export const CreateFacultyUR = async (
     await session.commitTransaction()
     await session.endSession()
     return createFaculty
-  } catch (error) {
+  } catch (error: any) {
     deleteImage(file.path)
     await session.abortTransaction()
     await session.endSession()
-    throw new AppError(501, 'Faculty not created')
+    throw new AppError(501, error.message)
   }
 }
 

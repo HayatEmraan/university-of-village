@@ -95,6 +95,4 @@ studentSchema.pre('find', async function (next) {
   next()
 })
 
-
-
 export const studentModel = model<TStudent>('student', studentSchema)

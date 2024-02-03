@@ -13,6 +13,17 @@ const EnrolledCourse: RequestHandler = catchAsync(async (req, res) => {
   })
 })
 
+const EnrolledCourseUpdate: RequestHandler = catchAsync(async (req, res) => {
+  const { userId } = req.user
+  return globalResponseHandler(res, {
+    status: 200,
+    success: true,
+    message: 'Enrolled Course updated successfully',
+    data: await EnrolledCourseService.updateEnrolledCourse(userId, req.body),
+  })
+})
+
 export const EnrolledController = {
   EnrolledCourse,
+  EnrolledCourseUpdate,
 }

@@ -10,6 +10,8 @@ import {
   AcademicSemesterValidation,
   UpdateAcademicSemesterValidation,
 } from './academic.validate'
+import { auth } from '../utils/auth'
+import { authOptions } from '../../interface/auth.options'
 
 export const AcademicRoutes = Router()
 
@@ -19,7 +21,7 @@ AcademicRoutes.post(
   createSemester,
 )
 
-AcademicRoutes.get('/', getSemesters)
+AcademicRoutes.get('/', auth(authOptions.admin), getSemesters)
 
 AcademicRoutes.get('/:id', getSingleSemester)
 

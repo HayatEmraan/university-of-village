@@ -57,7 +57,7 @@ export const OfferedValidation = z.object({
       endTime: endTimeValidation,
     })
     .refine(
-      data => {
+      (data) => {
         const start = new Date(`1970-01-01T${data.startTime}`)
         const end = new Date(`1970-01-01T${data.endTime}`)
         return start < end
@@ -84,7 +84,7 @@ export const UpdateOfferedValidation = z.object({
       }),
     })
     .refine(
-      data => {
+      (data) => {
         const start = new Date(`1970-01-01T${data.startTime}`)
         const end = new Date(`1970-01-01T${data.endTime}`)
         return start < end

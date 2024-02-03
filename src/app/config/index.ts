@@ -14,3 +14,6 @@ export const RESET_UI_LINK = process.env.RESET_UI_LINK
 export const CLOUDINARY_SECRET = process.env.CLOUDINARY_SECRET
 export const CLOUDINARY_API = process.env.CLOUDINARY_API
 export const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME
+export const REFRESH_TOKEN_EXPIRES = process.env.REFRESH_TOKEN_EXPIRES
+export const ACCESS_TOKEN_EXPIRES = process.env.ACCESS_TOKEN_EXPIRES
+export const RESET_TOKEN_EXPIRES = process.env.RESET_TOKEN_EXPIRES

@@ -24,10 +24,10 @@ export const CreateCourse = async (payload: TCourse) => {
 export const UpdateCourse = async (id: string, payload: TCourse) => {
   const { preRequisiteCourses, ...restPayload } = payload
   const preRequisiteCoursesDeleted = preRequisiteCourses
-    ?.filter(el => el.isDeleted && el.course)
-    .map(el => el.course)
+    ?.filter((el) => el.isDeleted && el.course)
+    .map((el) => el.course)
   const preRequisiteCoursesAdded = preRequisiteCourses?.filter(
-    el => !el.isDeleted && el.course,
+    (el) => !el.isDeleted && el.course,
   )
 
   // start transaction

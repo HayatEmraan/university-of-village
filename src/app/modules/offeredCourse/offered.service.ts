@@ -165,9 +165,10 @@ const deleteOfferedCourse = async (id: string) => {
   if (!isOfferedCourseExit) {
     throw new AppError(404, 'Offered course not found')
   }
-  const isSemesterRegistrationUpcoming = await SemesterRegistrationModel.findById(
-    isOfferedCourseExit.semesterRegistration,
-  ).select('status')
+  const isSemesterRegistrationUpcoming =
+    await SemesterRegistrationModel.findById(
+      isOfferedCourseExit.semesterRegistration,
+    ).select('status')
 
   if (isSemesterRegistrationUpcoming?.status !== SemesterStatus.UPCOMING) {
     throw new AppError(409, 'Semester registration is not upcoming')

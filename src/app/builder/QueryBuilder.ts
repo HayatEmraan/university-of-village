@@ -13,7 +13,7 @@ class QueryBuilder<T> {
     if (search) {
       this.modelQuery = this.modelQuery.find({
         $or: searchFields.map(
-          field =>
+          (field) =>
             ({
               [field]: {
                 $regex: search,
@@ -27,7 +27,7 @@ class QueryBuilder<T> {
   }
   filter() {
     const queryObj = { ...this.query }
-    excludeFields.forEach(el => delete queryObj[el])
+    excludeFields.forEach((el) => delete queryObj[el])
     if (Object.keys(queryObj).length) {
       this.modelQuery = this.modelQuery.find(queryObj as FilterQuery<T>)
     }

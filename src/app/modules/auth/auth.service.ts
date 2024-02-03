@@ -1,7 +1,10 @@
 import {
+  ACCESS_TOKEN_EXPIRES,
   JWT_ACCESS_TOKEN,
   JWT_REFRESH_TOKEN,
   JWT_RESET_TOKEN,
+  REFRESH_TOKEN_EXPIRES,
+  RESET_TOKEN_EXPIRES,
   RESET_UI_LINK,
   bcryptSaltRounds,
 } from '../../config'
@@ -31,11 +34,15 @@ const loginUser = async (payload: TUserLogin) => {
     role: user?.role,
   }
 
-  const accessToken = createToken(jwtPayload, JWT_ACCESS_TOKEN as string, '1h')
+  const accessToken = createToken(
+    jwtPayload,
+    JWT_ACCESS_TOKEN as string,
+    ACCESS_TOKEN_EXPIRES as string,
+  )
   const refreshToken = createToken(
     jwtPayload,
     JWT_REFRESH_TOKEN as string,
-    '7d',
+    REFRESH_TOKEN_EXPIRES as string,
   )
 
   return {
@@ -101,7 +108,11 @@ const refreshToken = async (token: string) => {
     role: user?.role,
   }
 
-  const accessToken = createToken(jwtPayload, JWT_ACCESS_TOKEN as string, '1h')
+  const accessToken = createToken(
+    jwtPayload,
+    JWT_ACCESS_TOKEN as string,
+    ACCESS_TOKEN_EXPIRES as string,
+  )
   return accessToken
 }
 
@@ -114,7 +125,11 @@ const resetLink = async (payload: { id: string }) => {
     userId: user?.id,
     role: user?.role,
   }
-  const token = createToken(jwtPayload, JWT_RESET_TOKEN as string, '10m')
+  const token = createToken(
+    jwtPayload,
+    JWT_RESET_TOKEN as string,
+    RESET_TOKEN_EXPIRES as string,
+  )
   const resetLink = `${RESET_UI_LINK}/reset-password/?id=${user?.id}&token=${token}`
   await sendEmail(user?.email, resetLink)
 }

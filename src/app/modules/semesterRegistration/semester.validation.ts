@@ -11,7 +11,6 @@ export const SemesterRegistrationValidation = z.object({
   }),
 })
 
-
 export const UpdateSemesterRegistrationValidation = z
   .object({
     body: z

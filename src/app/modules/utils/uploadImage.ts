@@ -23,7 +23,7 @@ export const uploadImage = async (name: string, file: string): Promise<any> => {
           reject(error)
         }
         resolve(result)
-        fs.unlink(file, err => {
+        fs.unlink(file, (err) => {
           if (err) throw err
           console.log('file deleted')
         })
@@ -33,7 +33,7 @@ export const uploadImage = async (name: string, file: string): Promise<any> => {
 }
 
 export const deleteImage = (file: string) => {
-  fs.unlink(file, err => {
+  fs.unlink(file, (err) => {
     if (err) throw err
     console.log('file deleted')
   })

@@ -12,7 +12,7 @@ import { authOptions } from '../../interface/auth.options'
 
 export const UFacultyRoutes = Router()
 
-UFacultyRoutes.get('/',auth(authOptions.admin), uFacultiesGet)
+UFacultyRoutes.get('/', auth(authOptions.admin), uFacultiesGet)
 
 UFacultyRoutes.get('/:id', uFacultyGet)
 

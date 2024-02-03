@@ -30,7 +30,6 @@ const SemesterRegistrationSchema = new Schema<TSemesterRegistration>(
   },
 )
 
-
 export const SemesterRegistrationModel = model<TSemesterRegistration>(
   'SemesterRegistration',
   SemesterRegistrationSchema,
