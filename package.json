@@ -44,21 +44,16 @@
     "prettier:fix": "npx prettier --write src",
     "lint": "eslint src --ignore-path .eslintignore --ext .ts",
     "lint:fix": "npm run lint --fix",
-    "prepare": "husky",
-    "husky": {
-      "hooks": {
-        "pre-commit": "lint-staged"
-      }
-    },
-    "lint-staged": {
-      "*.{js,jsx,ts,tsx}": [
-        "eslint --quiet --fix",
-        "prettier --write --ignore-unknown"
-      ],
-      "*.{json,html}": [
-        "prettier --write --ignore-unknown"
-      ]
-    }
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --quiet --fix",
+      "prettier --write --ignore-unknown"
+    ],
+    "*.{json,html}": [
+      "prettier --write --ignore-unknown"
+    ]
   },
   "keywords": [],
   "author": "",
