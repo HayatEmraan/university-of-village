@@ -3,6 +3,7 @@ import {
   AssignCourseToFacultiesIntoDb,
   CreateCourseIntoDb,
   DeleteCourseFromDb,
+  GetCourseFaculties,
   GetCourseFromDb,
   GetCoursesFromDb,
   RemoveCourseToFacultiesIntoDb,
@@ -39,6 +40,7 @@ CourseRoutes.put(
   requestValidate(CourseFacultiesValidation),
   AssignCourseToFacultiesIntoDb,
 )
+CourseRoutes.get('/:id/get-faculties', GetCourseFaculties)
 
 CourseRoutes.delete(
   '/:id/remove-faculties',

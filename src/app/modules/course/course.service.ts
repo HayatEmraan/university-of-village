@@ -3,7 +3,7 @@ import QueryBuilder from '../../builder/QueryBuilder'
 import { TCourse, TCourseFaculties } from './course.interface'
 import { CourseFacultiesModel, CourseModel } from './course.schema'
 import AppError from '../../errors/appError'
-import { facultyModel } from '../academicFaculty/faculty.schema'
+import { UFacultyModel } from '../faculty/uFaculty.schema'
 
 export const GetCourses = async function (query: Record<string, unknown>) {
   const courseQuery = new QueryBuilder(
@@ -99,7 +99,7 @@ export const AssignCourseToFaculties = async (
   id: string,
   payload: Partial<TCourseFaculties>,
 ) => {
-  const facultyFind = await facultyModel.find({
+  const facultyFind = await UFacultyModel.find({
     _id: { $in: payload.faculties },
     isDeleted: false,
   })
@@ -141,5 +141,16 @@ export const RemoveCourseToFaculties = async (
       new: true,
       runValidators: true,
     },
+  )
+}
+
+export const getFacultiesWithFromDb = async (id: string) => {
+  const findCheck = await CourseFacultiesModel.findOne({ course: id })
+
+  if (!findCheck) {
+    throw new AppError(400, 'Course not found')
+  }
+  return await CourseFacultiesModel.findOne({ course: id }).populate(
+    'faculties',
   )
 }

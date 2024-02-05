@@ -8,6 +8,7 @@ import {
   GetCourses,
   RemoveCourseToFaculties,
   UpdateCourse,
+  getFacultiesWithFromDb,
 } from './course.service'
 import { catchAsync } from '../utils/catchAsync'
 
@@ -74,6 +75,15 @@ const RemoveFacultiesIntoDb: RequestHandler = async (req, res) => {
   })
 }
 
+const getFacultiesWithCourse: RequestHandler = async (req, res) => {
+  return globalResponseHandler(res, {
+    status: 200,
+    success: true,
+    message: 'Faculties retrieved successfully',
+    data: await getFacultiesWithFromDb(req.params.id),
+  })
+}
+
 export const CreateCourseIntoDb = catchAsync(CourseCreate)
 export const GetCoursesFromDb = catchAsync(CourseGetAll)
 export const GetCourseFromDb = catchAsync(CourseGet)
@@ -81,3 +91,5 @@ export const UpdateCourseIntoDb = catchAsync(CourseUpdate)
 export const DeleteCourseFromDb = catchAsync(CourseDelete)
 export const AssignCourseToFacultiesIntoDb = catchAsync(AssignFacultiesIntoDb)
 export const RemoveCourseToFacultiesIntoDb = catchAsync(RemoveFacultiesIntoDb)
+
+export const GetCourseFaculties = catchAsync(getFacultiesWithCourse)
