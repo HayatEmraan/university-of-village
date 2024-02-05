@@ -12,14 +12,27 @@ import { authOptions } from '../../interface/auth.options'
 
 export const UFacultyRoutes = Router()
 
-UFacultyRoutes.get('/', auth(authOptions.admin), uFacultiesGet)
+UFacultyRoutes.get(
+  '/',
+  auth(authOptions.admin, authOptions.superAdmin),
+  uFacultiesGet,
+)
 
-UFacultyRoutes.get('/:id', uFacultyGet)
+UFacultyRoutes.get(
+  '/:id',
+  auth(authOptions.admin, authOptions.superAdmin, authOptions.faculty),
+  uFacultyGet,
+)
 
 UFacultyRoutes.patch(
   '/:id',
+  auth(authOptions.admin, authOptions.superAdmin),
   requestValidate(updateUFacultyValidation),
   uFacultyUpdate,
 )
 
-UFacultyRoutes.delete('/:id', uFacultyDelete)
+UFacultyRoutes.delete(
+  '/:id',
+  auth(authOptions.admin, authOptions.superAdmin),
+  uFacultyDelete,
+)

@@ -34,7 +34,6 @@ export const UFacultyValidation = z.object({
       academicDepartment: z.string(),
       academicFaculty: z.string(),
       designation: z.string(),
-      profileImage: z.string().optional(),
       isDeleted: z.boolean().default(false),
     }),
   }),

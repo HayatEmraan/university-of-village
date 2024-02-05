@@ -20,6 +20,7 @@ export class NonPrimitive {
 }
 
 export const searchFields = [
+  'email',
   'name.firstName',
   'name.lastName',
   'name.middleName',

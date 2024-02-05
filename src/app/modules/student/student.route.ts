@@ -12,18 +12,27 @@ import { authOptions } from '../../interface/auth.options'
 
 export const StudentRoutes = Router()
 
-StudentRoutes.get('/', auth(authOptions.admin), studentsGet)
+StudentRoutes.get(
+  '/',
+  auth(authOptions.admin, authOptions.superAdmin),
+  studentsGet,
+)
 
 StudentRoutes.get(
   '/:id',
-  auth(authOptions.admin, authOptions.faculty),
+  auth(authOptions.admin, authOptions.superAdmin, authOptions.faculty),
   studentGet,
 )
 
 StudentRoutes.patch(
   '/:id',
+  auth(authOptions.admin, authOptions.superAdmin),
   requestValidate(updateStudentSchemaValidation),
   studentUpdate,
 )
 
-StudentRoutes.delete('/:id', studentDelete)
+StudentRoutes.delete(
+  '/:id',
+  auth(authOptions.admin, authOptions.superAdmin),
+  studentDelete,
+)

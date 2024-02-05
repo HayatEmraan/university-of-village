@@ -12,7 +12,7 @@ export const userSchema = new Schema<TUser, IUserIn>(
     needsPasswordChange: { type: Boolean, required: true, default: true },
     role: {
       type: String,
-      enum: ['student', 'admin', 'faculty'],
+      enum: ['student', 'admin', 'faculty', 'superAdmin'],
       required: true,
       default: 'student',
     },

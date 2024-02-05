@@ -19,7 +19,7 @@ export const UserRoutes = express.Router()
 
 UserRoutes.post(
   '/create-student',
-  auth(authOptions.admin),
+  auth(authOptions.admin, authOptions.superAdmin),
   upload.single('profileImage'),
   (req: Request, res: Response, next: NextFunction) => {
     req.body = JSON.parse(req.body.data)
@@ -31,7 +31,7 @@ UserRoutes.post(
 
 UserRoutes.post(
   '/create-faculty',
-  auth(authOptions.admin),
+  auth(authOptions.admin, authOptions.superAdmin),
   upload.single('profileImage'),
   (req: Request, res: Response, next: NextFunction) => {
     req.body = JSON.parse(req.body.data)
@@ -43,7 +43,7 @@ UserRoutes.post(
 
 UserRoutes.post(
   '/create-admin',
-  auth(authOptions.admin),
+  auth(authOptions.superAdmin),
   upload.single('profileImage'),
   (req: Request, res: Response, next: NextFunction) => {
     req.body = JSON.parse(req.body.data)
@@ -55,7 +55,12 @@ UserRoutes.post(
 
 UserRoutes.get(
   '/me',
-  auth(authOptions.admin, authOptions.student, authOptions.faculty),
+  auth(
+    authOptions.admin,
+    authOptions.student,
+    authOptions.faculty,
+    authOptions.superAdmin,
+  ),
   getMe,
 )
 

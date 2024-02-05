@@ -39,7 +39,6 @@ export const AdminValidation = z.object({
       permanentAddress: z.string(),
       designation: z.string(),
       managementDepartment: z.string(),
-      profileImage: z.string(),
       isDeleted: z.boolean().default(false),
     }),
   }),
