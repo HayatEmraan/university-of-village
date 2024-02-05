@@ -44,7 +44,7 @@
     "prettier:fix": "npx prettier --write src",
     "lint": "eslint src --ignore-path .eslintignore --ext .ts",
     "lint:fix": "npm run lint --fix",
-    "prepare": "husky"
+    "prepare": "npx husky install"
   },
   "keywords": [],
   "author": "",
