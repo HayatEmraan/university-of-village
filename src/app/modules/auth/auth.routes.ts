@@ -21,13 +21,24 @@ AuthRoutes.post(
 
 AuthRoutes.post(
   '/change-password',
-  auth(authOptions.admin, authOptions.faculty, authOptions.student),
+  auth(
+    authOptions.admin,
+    authOptions.faculty,
+    authOptions.student,
+    authOptions.superAdmin,
+  ),
   requestValidate(changePasswordValidation),
   AuthController.changePassword,
 )
 
 AuthRoutes.post(
   '/refresh-token',
+  auth(
+    authOptions.admin,
+    authOptions.faculty,
+    authOptions.student,
+    authOptions.superAdmin,
+  ),
   requestValidate(refreshTokenValidation),
   AuthController.refreshToken,
 )

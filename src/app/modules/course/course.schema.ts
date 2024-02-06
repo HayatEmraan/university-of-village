@@ -62,7 +62,7 @@ const CourseFaculties = new Schema<TCourseFaculties>(
     },
     faculties: {
       type: [Schema.Types.ObjectId],
-      ref: 'user',
+      ref: 'UFaculty',
       trim: true,
     },
   },
