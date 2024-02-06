@@ -51,10 +51,21 @@ const deleteOfferedCourse: RequestHandler = catchAsync(async (req, res) => {
   })
 })
 
+const myOfferedCourses: RequestHandler = catchAsync(async (req, res) => {
+  const { userId } = req.user
+  return globalResponseHandler(res, {
+    status: 200,
+    success: true,
+    message: 'Offered Course retrieved successfully',
+    data: await OfferedCourseService.getMyOfferedCourse(userId),
+  })
+})
+
 export const OfferedController = {
   createOfferedCourse,
   getAllOfferedCourse,
   getOfferedCourse,
   updateOfferedCourse,
   deleteOfferedCourse,
+  myOfferedCourses,
 }

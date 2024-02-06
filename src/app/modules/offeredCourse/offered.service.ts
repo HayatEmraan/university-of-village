@@ -9,6 +9,7 @@ import { SemesterRegistrationModel } from '../semesterRegistration/semester.sche
 import { OfferedCourseModel } from './offered.schema'
 import { TOfferedCourse } from './offered.type'
 import { hasTimeConflict } from './offered.utils'
+import { studentModel } from '../student/student.schema'
 
 const createOfferedCourse = async (payload: TOfferedCourse) => {
   const {
@@ -95,7 +96,7 @@ const createOfferedCourse = async (payload: TOfferedCourse) => {
 }
 
 const getAllOfferedCourse = async (query: Record<string, unknown>) => {
-  const result = new QueryBuilder(
+  const OfferedCourseQuery = new QueryBuilder(
     OfferedCourseModel.find().populate('semesterRegistration'),
     query,
   )
@@ -104,7 +105,11 @@ const getAllOfferedCourse = async (query: Record<string, unknown>) => {
     .select()
     .paginate()
 
-  return await result.modelQuery
+  const result = await OfferedCourseQuery.modelQuery
+
+  return {
+    result,
+  }
 }
 
 const getOfferedCourse = async (id: string) => {
@@ -176,10 +181,54 @@ const deleteOfferedCourse = async (id: string) => {
   return await OfferedCourseModel.findByIdAndDelete(id)
 }
 
+const getMyOfferedCourse = async (id: string) => {
+  console.log(id)
+
+  const activeStudent = await studentModel.findOne({
+    id,
+  })
+
+  if (!activeStudent) {
+    throw new AppError(404, 'Student not found')
+  }
+
+  const ongoingRegistrationSemester = await SemesterRegistrationModel.findOne({
+    status: SemesterStatus.ONGOING,
+  })
+
+  if (!ongoingRegistrationSemester) {
+    throw new AppError(404, 'Semester not found')
+  }
+
+  const result = await OfferedCourseModel.aggregate([
+    {
+      $match: {
+        semesterRegistration: ongoingRegistrationSemester._id,
+        academicDepartment: activeStudent.academicDepartment,
+        academicFaculty: activeStudent.academicFaculty,
+      },
+    },
+    {
+      $lookup: {
+        from: 'courses',
+        localField: 'course',
+        foreignField: '_id',
+        as: 'course',
+      },
+    },
+    {
+      $unwind: '$course',
+    },
+  ])
+
+  return result
+}
+
 export const OfferedCourseService = {
   createOfferedCourse,
   getAllOfferedCourse,
   getOfferedCourse,
   updateOfferedCourse,
   deleteOfferedCourse,
+  getMyOfferedCourse,
 }

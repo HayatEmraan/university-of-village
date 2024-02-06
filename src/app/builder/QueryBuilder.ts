@@ -56,6 +56,10 @@ class QueryBuilder<T> {
     }
     return this
   }
+  countTotal() {
+    this.modelQuery = this.modelQuery.count()
+    return this
+  }
 }
 
 export default QueryBuilder

@@ -19,6 +19,7 @@ OfferedRoutes.post(
 
 OfferedRoutes.get(
   '/get-all-offered-course',
+  auth(authOptions.admin, authOptions.superAdmin, authOptions.faculty),
   OfferedController.getAllOfferedCourse,
 )
 
@@ -35,4 +36,10 @@ OfferedRoutes.delete(
   '/delete-offered-course/:id',
   auth(authOptions.admin, authOptions.superAdmin),
   OfferedController.deleteOfferedCourse,
+)
+
+OfferedRoutes.get(
+  '/my-offered-course',
+  auth(authOptions.student),
+  OfferedController.myOfferedCourses,
 )

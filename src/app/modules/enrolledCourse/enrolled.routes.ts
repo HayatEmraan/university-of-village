@@ -19,7 +19,7 @@ EnrolledRoutes.post(
 
 EnrolledRoutes.patch(
   '/update-enroll-course',
-  auth(authOptions.faculty),
+  auth(authOptions.faculty, authOptions.admin, authOptions.superAdmin),
   requestValidate(enrolledUpdateValidation),
   EnrolledController.EnrolledCourseUpdate,
 )
