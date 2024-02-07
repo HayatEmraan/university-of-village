@@ -6,7 +6,8 @@ import AppError from '../../errors/appError'
 import { SemesterRegistrationModel } from '../semesterRegistration/semester.schema'
 import { CourseModel } from '../course/course.schema'
 import { TEnrolled } from './enrolled.type'
-import { facultyModel } from '../academicFaculty/faculty.schema'
+import { UFacultyModel } from '../faculty/uFaculty.schema'
+import { calculateGradePoints } from './enrolled.utils'
 
 const createEnrolledCourse = async (
   user: string,
@@ -157,17 +158,16 @@ const updateEnrolledCourse = async (
     throw new Error('Semester registration not found')
   }
 
-  const isFacultyExit = await facultyModel.findOne({
+  const isFacultyExit = await UFacultyModel.findOne({
     id: user,
   })
+
   const isCourseFacultyBelong = await EnrolledModel.findOne({
     student,
     offeredCourse,
     semesterRegistration,
     faculty: isFacultyExit?._id,
   })
-
-  console.log(isCourseFacultyBelong)
 
   if (!isCourseFacultyBelong) {
     throw new Error('You are not authorized to update this course')
@@ -181,6 +181,20 @@ const updateEnrolledCourse = async (
     for (const [key, value] of Object.entries(modifiedCourseMarks)) {
       modifiedCourseMarks[`courseMarks.${key}`] = value
     }
+  }
+
+  if (courseMarks?.finalTerm) {
+    const { classTest1, midTerm, classTest2, finalTerm } =
+      isCourseFacultyBelong.courseMarks
+    const totalMarks =
+      Math.ceil(classTest1) +
+      Math.ceil(midTerm) +
+      Math.ceil(classTest2) +
+      Math.ceil(finalTerm)
+    const result = calculateGradePoints(totalMarks)
+    modifiedCourseMarks.grade = result.grade
+    modifiedCourseMarks.gradePoints = result.gradePoints
+    modifiedCourseMarks.isCompleted = true
   }
 
   return await EnrolledModel.findOneAndUpdate(
