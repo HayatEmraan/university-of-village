@@ -10,12 +10,19 @@ export const GetCourses = async function (query: Record<string, unknown>) {
     CourseModel.find().populate('preRequisiteCourses.course'),
     query,
   )
-  return await courseQuery
+
+  const result = await courseQuery
     .search(['title', 'prefix'])
     .filter()
     .sort()
     .select()
     .paginate().modelQuery
+
+  const meta = await courseQuery.countTotal()
+  return {
+    result,
+    meta,
+  }
 }
 
 export const CreateCourse = async (payload: TCourse) => {

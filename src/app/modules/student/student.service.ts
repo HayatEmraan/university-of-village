@@ -7,14 +7,22 @@ import QueryBuilder from '../../builder/QueryBuilder'
 import { searchFields } from './student.utils'
 
 export const getStudentsFromDb = async (query: Record<string, unknown>) => {
-  const result = new QueryBuilder(studentModel.find().populate('user'), query)
+  const resultQuery = new QueryBuilder(
+    studentModel.find().populate('user'),
+    query,
+  )
     .search(searchFields)
     .filter()
     .sort()
     .select()
     .paginate()
 
-  return await result.modelQuery
+  const result = await resultQuery.modelQuery
+
+  return {
+    result,
+    meta: await resultQuery.countTotal(),
+  }
 }
 
 export const getSingleStudentFromDb = async (id: string) => {

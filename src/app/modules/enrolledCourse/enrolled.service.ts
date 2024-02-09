@@ -8,6 +8,7 @@ import { CourseModel } from '../course/course.schema'
 import { TEnrolled } from './enrolled.type'
 import { UFacultyModel } from '../faculty/uFaculty.schema'
 import { calculateGradePoints } from './enrolled.utils'
+import QueryBuilder from '../../builder/QueryBuilder'
 
 const createEnrolledCourse = async (
   user: string,
@@ -208,7 +209,36 @@ const updateEnrolledCourse = async (
   )
 }
 
+const getMyEnrolledCourseFromDB = async (
+  user: string,
+  query: Record<string, unknown>,
+) => {
+  const isStudentExit = await studentModel.findOne({ id: user })
+  if (!isStudentExit) {
+    throw new Error('Student not found')
+  }
+
+  const result = new QueryBuilder(
+    EnrolledModel.find({ student: isStudentExit._id }).populate(
+      'semesterRegistration academicSemester academicDepartment offeredCourse course faculty student',
+    ),
+    query,
+  )
+    .filter()
+    .sort()
+    .select()
+    .paginate()
+
+  const meta = await result.countTotal()
+
+  return {
+    meta,
+    data: await result.modelQuery,
+  }
+}
+
 export const EnrolledCourseService = {
   createEnrolledCourse,
   updateEnrolledCourse,
+  getMyEnrolledCourseFromDB,
 }

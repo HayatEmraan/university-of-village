@@ -10,11 +10,13 @@ import {
 import { NonPrimitive } from './student.utils'
 
 const getStudents: RequestHandler = async (req, res) => {
+  const { meta, result } = await getStudentsFromDb(req.query)
   return globalResponseHandler(res, {
     status: 200,
     success: true,
     message: 'Students retrieved successfully',
-    data: await getStudentsFromDb(req.query),
+    data: result,
+    meta,
   })
 }
 

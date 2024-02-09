@@ -23,3 +23,9 @@ EnrolledRoutes.patch(
   requestValidate(enrolledUpdateValidation),
   EnrolledController.EnrolledCourseUpdate,
 )
+
+EnrolledRoutes.get(
+  '/my-enrolled-courses',
+  auth(authOptions.student),
+  EnrolledController.getMyEnrolledCourse,
+)

@@ -61,7 +61,7 @@ const updateSemesterRegistration = async (
 }
 
 const getAllSemesterRegistration = async (query: Record<string, unknown>) => {
-  const result = new QueryBuilder(
+  const resultQuery = new QueryBuilder(
     SemesterRegistrationModel.find().populate('academicSemester'),
     query,
   )
@@ -69,7 +69,12 @@ const getAllSemesterRegistration = async (query: Record<string, unknown>) => {
     .sort()
     .paginate()
     .select()
-  return await result.modelQuery
+
+  const result = await resultQuery.modelQuery
+  return {
+    result,
+    meta: await resultQuery.countTotal(),
+  }
 }
 
 const getSemesterRegistration = async (id: string) => {

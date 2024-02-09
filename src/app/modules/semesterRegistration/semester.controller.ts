@@ -18,13 +18,14 @@ const semesterRegistrationCreate: RequestHandler = catchAsync(
 
 const getAllSemesterRegistration: RequestHandler = catchAsync(
   async (req, res) => {
+    const { meta, result } =
+      await SemesterRegistrationService.getAllSemesterRegistration(req.query)
     return globalResponseHandler(res, {
       status: 200,
       success: true,
       message: 'Semester registration retrieved successfully',
-      data: await SemesterRegistrationService.getAllSemesterRegistration(
-        req.query,
-      ),
+      data: result,
+      meta,
     })
   },
 )

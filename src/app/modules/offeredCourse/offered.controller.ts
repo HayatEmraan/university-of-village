@@ -13,11 +13,15 @@ const createOfferedCourse: RequestHandler = catchAsync(async (req, res) => {
 })
 
 const getAllOfferedCourse: RequestHandler = catchAsync(async (req, res) => {
+  const { meta, result } = await OfferedCourseService.getAllOfferedCourse(
+    req.query,
+  )
   return globalResponseHandler(res, {
     status: 200,
     success: true,
     message: 'Offered Course retrieved successfully',
-    data: await OfferedCourseService.getAllOfferedCourse(req.query),
+    data: result,
+    meta,
   })
 })
 
@@ -57,7 +61,7 @@ const myOfferedCourses: RequestHandler = catchAsync(async (req, res) => {
     status: 200,
     success: true,
     message: 'Offered Course retrieved successfully',
-    data: await OfferedCourseService.getMyOfferedCourse(userId),
+    data: await OfferedCourseService.getMyOfferedCourse(userId, req.query),
   })
 })
 

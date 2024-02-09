@@ -106,9 +106,11 @@ const getAllOfferedCourse = async (query: Record<string, unknown>) => {
     .paginate()
 
   const result = await OfferedCourseQuery.modelQuery
+  const meta = await OfferedCourseQuery.countTotal()
 
   return {
     result,
+    meta,
   }
 }
 
@@ -181,8 +183,17 @@ const deleteOfferedCourse = async (id: string) => {
   return await OfferedCourseModel.findByIdAndDelete(id)
 }
 
-const getMyOfferedCourse = async (id: string) => {
-  console.log(id)
+const getMyOfferedCourse = async (
+  id: string,
+  query: Record<string, unknown>,
+) => {
+  const { page, limit } = query
+
+  const pageLimit = Number(page) || 1
+
+  const limitValue = Number(limit) || 10
+
+  const skipValue = (pageLimit - 1) * limitValue
 
   const activeStudent = await studentModel.findOne({
     id,
@@ -200,7 +211,7 @@ const getMyOfferedCourse = async (id: string) => {
     throw new AppError(404, 'Semester not found')
   }
 
-  const result = await OfferedCourseModel.aggregate([
+  const aggregateQuery = [
     {
       $match: {
         semesterRegistration: ongoingRegistrationSemester._id,
@@ -249,7 +260,57 @@ const getMyOfferedCourse = async (id: string) => {
       },
     },
     {
+      $lookup: {
+        from: 'enrolleds',
+        let: {
+          semesterId: ongoingRegistrationSemester._id,
+          studentId: activeStudent._id,
+        },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  {
+                    $eq: ['$student', '$$studentId'],
+                  },
+                  {
+                    $eq: ['$isCompleted', true],
+                  },
+                ],
+              },
+            },
+          },
+        ],
+        as: 'completedCourse',
+      },
+    },
+    {
       $addFields: {
+        completedCourseId: {
+          $map: {
+            input: '$completedCourse',
+            as: 'completed',
+            in: '$$completed.course',
+          },
+        },
+      },
+    },
+    {
+      $addFields: {
+        prerequisitesFulfilled: {
+          $or: [
+            {
+              $eq: ['$course.preRequisiteCourses', []],
+            },
+            {
+              $setIsSubset: [
+                '$course.preRequisiteCourses.course',
+                '$completedCourseId',
+              ],
+            },
+          ],
+        },
         alreadyEnrolled: {
           $in: [
             '$course._id',
@@ -264,9 +325,39 @@ const getMyOfferedCourse = async (id: string) => {
         },
       },
     },
+    {
+      $match: {
+        prerequisitesFulfilled: true,
+        alreadyEnrolled: false,
+      },
+    },
+  ]
+
+  const paginateQuery = [
+    {
+      $skip: skipValue,
+    },
+    {
+      $limit: limitValue,
+    },
+  ]
+
+  const result = await OfferedCourseModel.aggregate([
+    ...aggregateQuery,
+    ...paginateQuery,
   ])
 
-  return result
+  const total = (await OfferedCourseModel.aggregate(aggregateQuery)).length
+
+  return {
+    meta: {
+      page: pageLimit,
+      limit: limitValue,
+      total,
+      totalPage: Math.ceil(total / limitValue),
+    },
+    data: result,
+  }
 }
 
 export const OfferedCourseService = {
