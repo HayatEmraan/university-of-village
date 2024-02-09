@@ -217,9 +217,8 @@ export const getMeById = async (id: string, role: string) => {
   if (role === 'student')
     return await studentModel
       .findOne({ id })
-      .populate('academicSemester')
-      .populate('academicDepartment')
-      .populate('user')
+      .populate('academicSemester user academicDepartment academicFaculty')
+
   if (role === 'admin') return await AdminModel.findOne({ id }).populate('user')
   if (role === 'faculty')
     return await UFacultyModel.findOne({ id }).populate('user')
