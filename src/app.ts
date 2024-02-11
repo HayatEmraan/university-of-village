@@ -22,7 +22,7 @@ app.get('/', (req, res) => {
   })
 })
 
-app.get('*', (req, res) => {
+app.use('*', (req, res) => {
   return res.status(404).send({
     success: false,
     message: 'Route not found',

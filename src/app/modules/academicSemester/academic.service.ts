@@ -1,3 +1,4 @@
+import QueryBuilder from '../../builder/QueryBuilder'
 import AppError from '../../errors/appError'
 import { TAcademicSemester } from './academic.interface'
 import { AcademicSemesterModel } from './academic.schema'
@@ -10,8 +11,19 @@ export const createAcademicSemester = (payload: TAcademicSemester) => {
   return AcademicSemesterModel.create(payload)
 }
 
-export const getAcademicSemesters = async () => {
-  return await AcademicSemesterModel.find({})
+export const getAcademicSemesters = async (query: Record<string, unknown>) => {
+  const semesterQuery = new QueryBuilder(AcademicSemesterModel.find(), query)
+    .filter()
+    .paginate()
+    .select()
+    .sort()
+
+  const result = await semesterQuery.modelQuery
+  const meta = await semesterQuery.countTotal()
+  return {
+    result,
+    meta,
+  }
 }
 
 export const getSingleSemesterById = async (id: string) => {

@@ -18,11 +18,13 @@ const createAcademic: RequestHandler = async (req, res) => {
 }
 
 const getAcademics: RequestHandler = async (req, res) => {
+  const { result, meta } = await getAcademicSemesters(req.query)
   return globalResponseHandler(res, {
     status: 200,
     success: true,
     message: 'Academic semesters retrieved successfully',
-    data: await getAcademicSemesters(),
+    data: result,
+    meta,
   })
 }
 
