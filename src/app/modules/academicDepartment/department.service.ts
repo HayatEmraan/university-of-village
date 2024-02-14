@@ -15,7 +15,7 @@ export const createDepartmentIntoDb = async (payload: TDepartmentInterface) => {
 }
 
 export const getDepartmentsFromDb = async () => {
-  return await departmentModel.find({})
+  return await departmentModel.find({}).populate('academicFaculty')
 }
 
 export const updateDepartmentIntoDb = async (
@@ -26,5 +26,5 @@ export const updateDepartmentIntoDb = async (
 }
 
 export const getDepartmentFromDb = async (id: string) => {
-  return await departmentModel.findById(id)
+  return await departmentModel.findById(id).populate('academicFaculty')
 }
