@@ -43,7 +43,8 @@ class QueryBuilder<T> {
   paginate() {
     this.modelQuery = this.modelQuery
       .skip(
-        Number(this?.query?.page || 1 - 1) * Number(this?.query?.limit || 10),
+        ((Number(this?.query?.page) || 1) - 1) *
+          Number(this?.query?.limit || 10),
       )
       .limit(Number(this?.query?.limit || 10))
     return this

@@ -66,7 +66,7 @@ UserRoutes.get(
 
 UserRoutes.post(
   '/change-status/:id',
-  auth(authOptions.admin),
+  auth(authOptions.admin, authOptions.superAdmin),
   requestValidate(changeStatusValidation),
   changeStatus,
 )
